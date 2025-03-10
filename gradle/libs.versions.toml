@@ -1,0 +1,45 @@
+[versions]
+walkingApplication = "0.0.1-a"
+walkingLibrary = "0.0.1-a"
+walkingKotlin = "0.0.1-a"
+walkingDetekt = "0.0.1-a"
+
+agp = "8.3.1"
+kotlin = "1.9.23"
+detekt = "1.23.6"
+coreKtx = "1.13.1"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
+activity = "1.9.3"
+constraintlayout = "2.2.0"
+jvmTarget = "1.8"
+
+
+[libraries]
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+detekt-cli = { group = "io.gitlab.arturbosch.detekt", name = "detekt-cli", version.ref = "detekt" }
+
+[plugins]
+walking-application = { id = "walking.android.application", version.ref = "walkingApplication" }
+walking-library = { id = "walking.android.library", version.ref = "walkingLibrary" }
+walking-kotlin = { id = "walking.android.kotlin", version.ref = "walkingKotlin" }
+walking-detekt = { id = "walking.detekt", version.ref = "walkingDetekt" }
+
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+android-library = { id = "com.android.library", version.ref = "agp" }
