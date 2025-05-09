@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light Theme Colors -->
+    <color name="walking_app_light_0">#E6F4FF</color>
+    <color name="walking_app_light_100">#B3DEFF</color>
+    <color name="walking_app_light_200">#80C8FE</color>
+    <color name="walking_app_light_300">#4EB2FE</color>
+    <color name="walking_app_light_400">#34A6FE</color>
+    <color name="walking_app_light_500">#1B9BFE</color>
+    <color name="walking_app_light_600">#0290FD</color>
+    <color name="walking_app_light_700">#0182E4</color>
+    <color name="walking_app_light_800">#0173CB</color>
+    <color name="walking_app_light_900">#0165B1</color>
+
+    <!-- Night Theme Colors -->
+    <color name="walking_app_night_900">#091C2A</color>
+    <color name="walking_app_night_800">#0E2A3F</color>
+    <color name="walking_app_night_700">#123854</color>
+    <color name="walking_app_night_600">#174669</color>
+    <color name="walking_app_night_500">#1B547E</color>
+    <color name="walking_app_night_400">#206192</color>
+    <color name="walking_app_night_300">#2470A8</color>
+    <color name="walking_app_night_200">#297EBD</color>
+    <color name="walking_app_night_100">#4297D6</color>
+    <color name="walking_app_night_0">#57A3DB</color>
+
+    <!-- Base Colors -->
+    <color name="walking_app_white">#FFFFFF</color>
+    <color name="walking_app_black">#000000</color>
+
+    <!-- Status Colors -->
+    <color name="walking_app_soft_green">#89FF89</color>
+    <color name="walking_app_green">#00E000</color>
+    <color name="walking_app_red">#DB2100</color>
+    <color name="walking_app_soft_red">#FF7B64</color>
+
+    <!-- Widgets Colors -->
+    <color name="walking_app_banner_soft_inactive_color_light">@color/walking_app_night_0</color>
+    <color name="walking_app_banner_soft_inactive_color_night">@color/walking_app_light_0</color>
+    <color name="walking_app_banner_active_color">@color/walking_app_night_500</color>
+</resources>

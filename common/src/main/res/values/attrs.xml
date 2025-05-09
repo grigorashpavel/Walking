@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="walking_app_color_default_0" format="reference|color"/>
+    <attr name="walking_app_color_default_100" format="reference|color"/>
+    <attr name="walking_app_color_default_200" format="reference|color"/>
+    <attr name="walking_app_color_default_300" format="reference|color"/>
+    <attr name="walking_app_color_default_400" format="reference|color"/>
+    <attr name="walking_app_color_default_500" format="reference|color"/>
+    <attr name="walking_app_color_default_600" format="reference|color"/>
+    <attr name="walking_app_color_default_700" format="reference|color"/>
+    <attr name="walking_app_color_default_800" format="reference|color"/>
+    <attr name="walking_app_color_default_900" format="reference|color"/>
+
+    <attr name="walking_app_color_white" format="reference|color"/>
+    <attr name="walking_app_color_black" format="reference|color"/>
+
+    <attr name="walking_app_color_soft_red" format="reference|color"/>
+    <attr name="walking_app_color_red" format="reference|color"/>
+
+    <attr name="walking_app_color_soft_green" format="reference|color"/>
+    <attr name="walking_app_color_green" format="reference|color"/>
+
+    <declare-styleable name="PagesProgressIndicator">
+        <attr name="activeColor" format="color"/>
+        <attr name="inactiveColor" format="color"/>
+        <attr name="itemRadius" format="dimension"/>
+        <attr name="activeWidth" format="dimension"/>
+        <attr name="itemSpacing" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="Button">
+        <attr name="buttonBackgroundColor" format="reference|color" />
+        <attr name="buttonTextColor" format="reference|color" />
+    </declare-styleable>
+</resources>

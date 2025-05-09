@@ -1,4 +1,4 @@
-package ru.pasha.common
+package ru.pasha.common.pattern
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.channels.BufferOverflow
@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.update
 
 abstract class BaseViewModel<State, ViewState>(
     private val mapper: BaseMapper<State, ViewState>,
-    initialState: () -> State,
+    initialState: State,
 ) : ViewModel() {
-    private val _state by lazy { MutableStateFlow<State>(initialState()) }
+    private val _state by lazy { MutableStateFlow<State>(initialState) }
     private val _sideEffects by lazy {
         MutableSharedFlow<SideEffect>(
             extraBufferCapacity = 6,

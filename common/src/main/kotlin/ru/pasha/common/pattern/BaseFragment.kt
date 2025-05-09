@@ -1,4 +1,4 @@
-package ru.pasha.common
+package ru.pasha.common.pattern
 
 import android.os.Bundle
 import android.view.View
@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 abstract class BaseFragment<ViewState, ViewModel : BaseViewModel<*, ViewState>, Binding : ViewBinding>(
-    private val viewModelClass: Class<BaseViewModel<*, ViewState>>
-) : BindingFragment<ViewBinding>(), ViewModelProvider.Factory {
-    protected val viewModel: BaseViewModel<*, ViewState> by lazy(LazyThreadSafetyMode.NONE) {
+    private val viewModelClass: Class<ViewModel>
+) : BindingFragment<Binding>(), ViewModelProvider.Factory {
+    protected val viewModel: ViewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProvider(this, this)[viewModelClass]
     }
 

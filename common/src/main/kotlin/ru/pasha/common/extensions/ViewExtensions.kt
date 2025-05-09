@@ -1,10 +1,11 @@
-package ru.pasha.common
+package ru.pasha.common.extensions
 
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalFocusChangeListener
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.TextView
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +13,10 @@ import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import ru.pasha.common.Text
+import ru.pasha.common.format
+
+fun TextView.setText(text: Text) = setText(text.format(context))
 
 fun View.safeAddOnGlobalLayoutListener(listener: OnGlobalLayoutListener): AutoCloseable {
     return DetachingViewListener(

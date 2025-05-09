@@ -26,17 +26,18 @@ internal class AuthorizationInterceptor(
 
         val tokenUpdated = runBlocking {
             tokenRefreshMutex.withLock {
-                authManager.refreshToken()
+                authManager.refreshSession()
             }
         }
+        val token = authManager.getSessionKey()
 
-        if (!tokenUpdated) {
+        if (!tokenUpdated || token == null) {
             authManager.logout()
             return initialResponse
         }
 
         val newRequest = request.newBuilder()
-            .header(authHeader.value, authManager.getToken())
+            .header(authHeader.value, token)
             .build()
 
         return chain.proceed(newRequest)

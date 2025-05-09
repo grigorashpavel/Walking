@@ -30,9 +30,20 @@ dependencies {
     implementation(libs.dagger)
     ksp(libs.daggerCompiler)
 
+    implementation(libs.yandex.authSdk)
+
+    implementation(libs.cicerone)
+
+    implementation(libs.androidx.securityCrypto)
+
+    implementation(libs.coil)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(projects.common)
+    implementation(projects.network)
+    implementation(projects.coreNavigation)
+    implementation(projects.featureBanner)
 }

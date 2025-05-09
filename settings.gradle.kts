@@ -27,3 +27,6 @@ rootProject.name = "Walking"
 include(":app")
 include(":common")
 include(":network")
+include(":feature-banner")
+//include(":feature-auth")
+include(":core-navigation")

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Слайд 1 - Основной призыв -->
+    <string name="walking_app_intro_slide1_title">Откройте новые тропинки</string>
+    <string name="walking_app_intro_slide1_subtitle">Персонализированные маршруты по вашим предпочтениям</string>
+
+    <!-- Слайд 2 - Простота использования -->
+    <string name="walking_app_intro_slide2_title">Маршрут в три касания</string>
+    <string name="walking_app_intro_slide2_subtitle">Выберите параметры - получите идеальный путь</string>
+
+    <!-- Слайд 3 - Социальный аспект -->
+    <string name="walking_app_intro_slide3_title">Делитесь открытиями</string>
+    <string name="walking_app_intro_slide3_subtitle">Поделитесь мнением о своих лучших маршрутах</string>
+
+    <!-- Слайд 4 - Цель и авторство -->
+    <string name="walking_app_intro_slide4_title">Приложение для ВКР</string>
+    <string name="walking_app_intro_slide4_subtitle">Создал Григораш Павел\nСтудент группы ИКБО–06–21</string>
+
+    <string name="walking_app_intro_button_text">Начать путешествие</string>
+</resources>

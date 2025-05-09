@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme.Walking.Night" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="walking_app_color_default_0">@color/walking_app_night_0</item>
+        <item name="walking_app_color_default_100">@color/walking_app_night_100</item>
+        <item name="walking_app_color_default_200">@color/walking_app_night_200</item>
+        <item name="walking_app_color_default_300">@color/walking_app_night_300</item>
+        <item name="walking_app_color_default_400">@color/walking_app_night_400</item>
+        <item name="walking_app_color_default_500">@color/walking_app_night_500</item>
+        <item name="walking_app_color_default_600">@color/walking_app_night_600</item>
+        <item name="walking_app_color_default_700">@color/walking_app_night_700</item>
+        <item name="walking_app_color_default_800">@color/walking_app_night_800</item>
+        <item name="walking_app_color_default_900">@color/walking_app_night_900</item>
+
+        <item name="walking_app_color_white">@color/walking_app_white</item>
+        <item name="walking_app_color_black">@color/walking_app_black</item>
+
+        <item name="walking_app_color_soft_red">@color/walking_app_soft_red</item>
+        <item name="walking_app_color_red">@color/walking_app_red</item>
+
+        <item name="walking_app_color_soft_green">@color/walking_app_soft_green</item>
+        <item name="walking_app_color_green">@color/walking_app_green</item>
+
+        <item name="buttonBackgroundColor">@color/walking_app_light_100</item>
+        <item name="buttonTextColor">@color/walking_app_night_700</item>
+    </style>
+
+    <style name="Theme.Walking" parent="Base.Theme.Walking.Night" />
+
+    <style name="Theme.Walking.PageProgressIndicator" parent="Theme.Walking">
+        <item name="inactiveColor">@color/walking_app_banner_soft_inactive_color_night</item>
+        <item name="activeColor">@color/walking_app_banner_active_color</item>
+    </style>
+</resources>
