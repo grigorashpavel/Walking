@@ -11,8 +11,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply(libs.plugins.android.library.get().pluginId)
+                apply(libs.plugins.parcelize.get().pluginId)
             }
-
             extensions.configure<LibraryExtension> {
                 configureAndroidCommon(this)
                 configureAndroidLibrary(this)

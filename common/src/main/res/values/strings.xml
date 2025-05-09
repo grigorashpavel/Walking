@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="walking_app_intro_slide1_title">Discover New Trails</string>
+    <string name="walking_app_intro_slide1_subtitle">Personalized routes based on your preferences</string>
+
+
+    <string name="walking_app_intro_slide2_title">Route in Three Taps</string>
+    <string name="walking_app_intro_slide2_subtitle">Choose settings - get your perfect path</string>
+
+
+    <string name="walking_app_intro_slide3_title">Share Your Discoveries</string>
+    <string name="walking_app_intro_slide3_subtitle">Share thoughts about your favorite routes</string>
+
+
+    <string name="walking_app_intro_slide4_title">Final Degree Project App</string>
+    <string name="walking_app_intro_slide4_subtitle">Created by Pavel Grigorash\nStudent of group IKBO–06–21</string>
+
+    <string name="walking_app_intro_button_text">Start Exploring</string>
+</resources>

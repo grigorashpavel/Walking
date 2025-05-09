@@ -1,7 +1,7 @@
 package ru.pasha.network.api
 
 interface AuthManager {
-    suspend fun refreshToken(): Boolean
-    fun getToken(): String
+    suspend fun refreshSession(): Boolean
+    fun getSessionKey(): String?
     fun logout()
 }
