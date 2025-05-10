@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="walking_app_banner_progress_indicator_height">16dp</dimen>
+    <dimen name="walking_app_banner_title_top_margin">48dp</dimen>
+    <dimen name="walking_app_banner_text_horizontal_margin">16dp</dimen>
+</resources>

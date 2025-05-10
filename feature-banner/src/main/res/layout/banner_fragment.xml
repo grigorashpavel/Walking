@@ -30,7 +30,7 @@
         android:id="@+id/bannerProgressIndicator"
         style="@style/Theme.Walking.PageProgressIndicator"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/walking_app_banner_progress_indicator_height"
         android:layout_margin="16dp"
         android:alpha="0.7"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/bannersButton"
+        android:id="@+id/bannerButton"
         style="@style/Theme.Walking.Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -47,5 +47,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Текст кнопки" />
+
+    <include
+        android:id="@+id/bannerShimmer"
+        layout="@layout/banner_shimmer_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ru.pasha.common.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="?attr/walking_app_color_default_300"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/bannerProgressIndicatorShimmer"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/walking_app_banner_progress_indicator_height"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="2dp"
+            app:shimmerColor="?attr/walking_app_color_default_100"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeType="rectangle" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/bannerTitleShimmer"
+            android:layout_width="0dp"
+            app:shimmerColor="?attr/walking_app_color_default_100"
+            android:layout_height="40sp"
+            android:layout_marginHorizontal="@dimen/walking_app_banner_text_horizontal_margin"
+            android:layout_marginTop="8dp"
+            app:cornerRadius="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bannerProgressIndicatorShimmer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:shapeType="rectangle" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/bannerSubtitleShimmer1"
+            android:layout_width="0dp"
+            android:layout_height="32sp"
+            app:shimmerColor="?attr/walking_app_color_default_100"
+            android:layout_marginHorizontal="@dimen/walking_app_banner_text_horizontal_margin"
+            android:layout_marginTop="8dp"
+            app:cornerRadius="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bannerTitleShimmer"
+            app:shapeType="rectangle" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/bannerSubtitleShimmer2"
+            android:layout_width="0dp"
+            android:layout_height="32sp"
+            android:layout_marginStart="@dimen/walking_app_banner_text_horizontal_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="128dp"
+            app:cornerRadius="4dp"
+            app:shimmerColor="?attr/walking_app_color_default_100"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bannerSubtitleShimmer1"
+            app:shapeType="rectangle" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/bannerButtonShimmer"
+            android:layout_width="0dp"
+            app:shimmerColor="?attr/walking_app_color_default_100"
+            android:layout_height="64dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:shapeType="rectangle" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ru.pasha.common.ShimmerFrameLayout>

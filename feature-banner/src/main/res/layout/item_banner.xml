@@ -19,8 +19,8 @@
         android:id="@+id/bannerItemTextContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginHorizontal="@dimen/walking_app_banner_text_horizontal_margin"
+        android:layout_marginTop="@dimen/walking_app_banner_title_top_margin"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

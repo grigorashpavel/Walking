@@ -32,4 +32,22 @@
         <attr name="buttonBackgroundColor" format="reference|color" />
         <attr name="buttonTextColor" format="reference|color" />
     </declare-styleable>
+
+    <declare-styleable name="ShimmerView">
+        <attr name="shimmerColor" format="color|reference" />
+        <attr name="shimmerIntensity" format="float" />
+        <attr name="angle" format="integer" />
+
+        <attr name="shapeType" format="enum">
+            <enum name="rectangle" value="0" />
+            <enum name="oval" value="1" />
+            <enum name="circle" value="2" />
+        </attr>
+        <attr name="cornerRadius" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="ShimmerFrameLayout">
+        <attr name="shimmerAutoStart" format="boolean" />
+    </declare-styleable>
+
 </resources>

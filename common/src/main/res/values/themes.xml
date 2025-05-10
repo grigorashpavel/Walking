@@ -40,14 +40,13 @@
     <style name="Theme.Walking.Button" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="minHeight">64dp</item>
+        <item name="android:minHeight">64dp</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Headline</item>
         <item name="android:background">@drawable/rounded_button</item>
         <item name="backgroundTint">?attr/buttonBackgroundColor</item>
         <item name="android:textColor">?attr/buttonTextColor</item>
         <item name="android:paddingVertical">12dp</item>
         <item name="android:paddingHorizontal">24dp</item>
-        <item name="android:elevation">2dp</item>
     </style>
 
 </resources>

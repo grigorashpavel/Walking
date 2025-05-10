@@ -1,15 +1,18 @@
 package ru.pasha.feature.banner.internal.presentation
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.animation.doOnEnd
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
@@ -58,6 +61,8 @@ internal class BannerFragment @Inject constructor(
             binding.bannerProgressIndicator.isVisible = false
             binding.bannerPager.isVisible = false
         }
+        renderShimmer(viewState)
+
         when (viewState) {
             is BannerViewState.Loading -> {}
             is BannerViewState.Success -> with(binding) {
@@ -68,7 +73,7 @@ internal class BannerFragment @Inject constructor(
 
                 adapter.submitList(viewState.banners)
                 bannerProgressIndicator.setCount(viewState.banners.size)
-                bannersButton.setText(viewState.buttonText)
+                bannerButton.setText(viewState.buttonText)
             }
 
             is BannerViewState.Error -> {}
@@ -122,6 +127,23 @@ internal class BannerFragment @Inject constructor(
         }
     }
 
+    private fun renderShimmer(viewState: BannerViewState) {
+        if (viewState is BannerViewState.Loading) {
+            binding.bannerShimmer.root.isVisible = true
+        } else {
+            binding.bannerShimmer.root.safeAnimate {
+                ObjectAnimator
+                    .ofFloat(binding.bannerShimmer.root, View.ALPHA, 1f, 0f).apply {
+                        duration = SHIMMER_HIDING_DURATION
+                        doOnEnd {
+                            binding.bannerShimmer.root.stopShimmer()
+                            binding.bannerShimmer.root.isVisible = false
+                        }
+                    }
+            }
+        }
+    }
+
     private fun resetAutoScroll() {
         cancelAutoScroll()
         startAutoScroll()
@@ -134,15 +156,20 @@ internal class BannerFragment @Inject constructor(
     private fun applyInsets(insets: WindowInsetsCompat) {
         val barsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
+        val top = barsInsets.top + 8.dpToPx
+        val bottom = barsInsets.bottom + 8.dpToPx
+
         binding.bannerProgressIndicator.updateLayoutParams<MarginLayoutParams> {
-            updateMargins(top = barsInsets.top + 8.dpToPx)
+            updateMargins(top = top)
         }
-        binding.bannersButton.updateLayoutParams<MarginLayoutParams> {
-            updateMargins(bottom = barsInsets.bottom + 8.dpToPx)
+        binding.bannerButton.updateLayoutParams<MarginLayoutParams> {
+            updateMargins(bottom = bottom)
         }
+        binding.bannerShimmer.root.updatePadding(top = top, bottom = bottom)
     }
 
     private companion object {
         const val BANNER_VISIBILITY_DURATION = 5000L
+        const val SHIMMER_HIDING_DURATION = 1000L
     }
 }
