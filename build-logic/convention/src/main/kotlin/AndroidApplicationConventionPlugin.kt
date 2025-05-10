@@ -5,6 +5,7 @@ import convention.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import java.io.FileNotFoundException
 import java.util.Properties
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
@@ -43,12 +44,18 @@ private fun Project.configureBuildTypes(extension: ApplicationExtension) {
 
             loadSecrets(ApplicationBuildSettings.BuildType.Debug).forEach { (key, value) ->
                 if (key == "YANDEX_CLIENT_ID") {
-                    manifestPlaceholders["YANDEX_CLIENT_ID"] = value
+                    manifestPlaceholders["YANDEX_CLIENT_ID"] =
+                        value.removePrefix("\"").removeSuffix("\"")
                 }
                 buildConfigField(type = "String", name = key, value = value)
             }
 
-            buildConfigField("String", "ENV", "\"${ApplicationBuildSettings.BuildType.Debug.name}\"")
+            buildConfigField(
+                "String",
+                "ENV",
+                "\"${ApplicationBuildSettings.BuildType.Debug.name}\""
+            )
+            configureSigning(extension, loadSignSecrets(ApplicationBuildSettings.BuildType.Debug))
         }
 
         create(ApplicationBuildSettings.BuildType.Dev.getName()) {
@@ -57,7 +64,8 @@ private fun Project.configureBuildTypes(extension: ApplicationExtension) {
 
             loadSecrets(ApplicationBuildSettings.BuildType.Dev).forEach { (key, value) ->
                 if (key == "YANDEX_CLIENT_ID") {
-                    manifestPlaceholders["YANDEX_CLIENT_ID"] = value
+                    manifestPlaceholders["YANDEX_CLIENT_ID"] =
+                        value.removePrefix("\"").removeSuffix("\"")
                 }
                 buildConfigField(type = "String", name = key, value = "\"$value\"")
             }
@@ -69,7 +77,8 @@ private fun Project.configureBuildTypes(extension: ApplicationExtension) {
 
             loadSecrets(ApplicationBuildSettings.BuildType.Release).forEach { (key, value) ->
                 if (key == "YANDEX_CLIENT_ID") {
-                    manifestPlaceholders["YANDEX_CLIENT_ID"] = value
+                    manifestPlaceholders["YANDEX_CLIENT_ID"] =
+                        value.removePrefix("\"").removeSuffix("\"")
                 }
                 buildConfigField(type = "String", name = key, value = "\"$value\"")
             }
@@ -105,19 +114,64 @@ private fun Project.loadSecrets(buildType: ApplicationBuildSettings.BuildType): 
     return secrets
 }
 
-private fun Project.configureSigning(extension: ApplicationExtension) {
-    extension.signingConfigs {
-        create("release") {
-            storeFile = rootProject.file("keystore/release.jks")
-            storePassword = System.getenv("STORE_PASSWORD") ?: ""
-            keyAlias = System.getenv("KEY_ALIAS") ?: ""
-            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+private data class SignSecrets(
+    val key: String,
+    val storePassword: String,
+    val keyPassword: String,
+)
+
+private fun Project.loadSignSecrets(buildType: ApplicationBuildSettings.BuildType): SignSecrets {
+    val secretsFile = rootProject.file("secrets.properties")
+    if (secretsFile.exists()) {
+        val props = Properties().apply {
+            load(secretsFile.inputStream())
         }
+
+        if (buildType != ApplicationBuildSettings.BuildType.Debug) {
+            return SignSecrets(
+                key = System.getenv("KEY").toString(),
+                keyPassword = System.getenv("KEY_PASSWORD").toString(),
+                storePassword = System.getenv("STORE_PASSWORD").toString(),
+            )
+        }
+
+        val secrets = SignSecrets(
+            key = props["KEY"].toString().removePrefix("\"").removeSuffix("\""),
+            keyPassword = props["KEY_PASSWORD"].toString().removePrefix("\"").removeSuffix("\""),
+            storePassword = props["STORE_PASSWORD"].toString().removePrefix("\"")
+                .removeSuffix("\""),
+        )
+        return secrets
+    }
+    throw FileNotFoundException("Secrets file not found")
+}
+
+private fun Project.configureSigning(extension: ApplicationExtension, secrets: SignSecrets) {
+    println(secrets)
+    extension.signingConfigs {
+        getByName(ApplicationBuildSettings.BuildType.Debug.getName()) {
+            storeFile = rootProject.file("keystores/debug.p12")
+            storePassword = secrets.storePassword
+            keyAlias = secrets.key
+            keyPassword = secrets.storePassword
+        }
+
+//        create(ApplicationBuildSettings.BuildType.Release.getName()) {
+//            storeFile = rootProject.file("keystores/keystore.jks")
+//            storePassword = secrets.storePassword
+//            keyAlias = secrets.key
+//            keyPassword = secrets.storePassword
+//        }
     }
 
-    extension.buildTypes.getByName(ApplicationBuildSettings.BuildType.Release.getName()).apply {
+    extension.buildTypes.getByName(ApplicationBuildSettings.BuildType.Debug.getName()).apply {
         signingConfig = extension.signingConfigs.getByName(
-            ApplicationBuildSettings.BuildType.Release.getName()
+            ApplicationBuildSettings.BuildType.Debug.getName()
         )
     }
+//    extension.buildTypes.getByName(ApplicationBuildSettings.BuildType.Release.getName()).apply {
+//        signingConfig = extension.signingConfigs.getByName(
+//            ApplicationBuildSettings.BuildType.Release.getName()
+//        )
+//    }
 }

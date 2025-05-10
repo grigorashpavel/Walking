@@ -26,6 +26,9 @@
         <item name="walking_app_color_soft_green">@color/walking_app_soft_green</item>
         <item name="walking_app_color_green">@color/walking_app_green</item>
 
+
+        <item name="buttonPressedColor">@color/walking_app_light_100</item>
+        <item name="buttonNormalColor">@color/walking_app_light_200</item>
         <item name="buttonBackgroundColor">@color/walking_app_light_200</item>
         <item name="buttonTextColor">@color/walking_app_night_700</item>
     </style>
@@ -41,9 +44,12 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">64dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Headline</item>
         <item name="android:background">@drawable/rounded_button</item>
-        <item name="backgroundTint">?attr/buttonBackgroundColor</item>
         <item name="android:textColor">?attr/buttonTextColor</item>
         <item name="android:paddingVertical">12dp</item>
         <item name="android:paddingHorizontal">24dp</item>

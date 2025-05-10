@@ -29,6 +29,8 @@
     </declare-styleable>
 
     <declare-styleable name="Button">
+        <attr name="buttonNormalColor" format="reference|color" />
+        <attr name="buttonPressedColor" format="reference|color" />
         <attr name="buttonBackgroundColor" format="reference|color" />
         <attr name="buttonTextColor" format="reference|color" />
     </declare-styleable>

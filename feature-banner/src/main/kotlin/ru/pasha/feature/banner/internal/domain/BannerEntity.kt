@@ -6,5 +6,5 @@ import ru.pasha.common.models.ImageModel
 data class BannerEntity(
     val title: Text,
     val subtitle: Text?,
-    val image: ImageModel,
+    val image: ImageModel?,
 )

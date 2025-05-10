@@ -24,6 +24,8 @@
         <item name="walking_app_color_soft_green">@color/walking_app_soft_green</item>
         <item name="walking_app_color_green">@color/walking_app_green</item>
 
+        <item name="buttonPressedColor">@color/walking_app_light_200</item>
+        <item name="buttonNormalColor">@color/walking_app_light_100</item>
         <item name="buttonBackgroundColor">@color/walking_app_light_100</item>
         <item name="buttonTextColor">@color/walking_app_night_700</item>
     </style>

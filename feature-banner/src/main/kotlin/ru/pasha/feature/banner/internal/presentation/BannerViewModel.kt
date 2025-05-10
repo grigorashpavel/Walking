@@ -21,9 +21,7 @@ internal class BannerViewModel @AssistedInject constructor() :
         initialState = BannerState.Loading
     ) {
 
-    init {
-        loadBanners()
-    }
+    init { loadBanners() }
 
     private fun loadBanners() {
         viewModelScope.launch {
@@ -51,17 +49,14 @@ internal class BannerViewModel @AssistedInject constructor() :
                         title = Text.Resource(ru.pasha.common.R.string.walking_app_intro_slide3_title),
                         subtitle = Text.Resource(ru.pasha.common.R.string.walking_app_intro_slide3_subtitle),
                         image = ImageModel.Res(
-                            id = R.drawable.ic_banner2,
-                            scaleType = ScaleType.CENTER
+                            id = R.drawable.ic_water_banner,
+                            scaleType = ScaleType.FIT_XY
                         )
                     ),
                     BannerEntity(
                         title = Text.Resource(ru.pasha.common.R.string.walking_app_intro_slide4_title),
                         subtitle = Text.Resource(ru.pasha.common.R.string.walking_app_intro_slide4_subtitle),
-                        image = ImageModel.Res(
-                            id = R.drawable.ic_banner2,
-                            scaleType = ScaleType.CENTER_CROP
-                        )
+                        image = null
                     ),
                 )
             }
@@ -73,6 +68,9 @@ internal class BannerViewModel @AssistedInject constructor() :
             }
         }
     }
+
+    fun navigateToAuth(action: suspend () -> Unit) =
+        viewModelScope.launch { action() }
 
     fun retryLoading() {
         updateState { BannerState.Loading }

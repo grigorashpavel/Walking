@@ -41,8 +41,8 @@ class BannerViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: BannerEntity) = with(binding) {
-        bannerItemImage.loadImage(item.image)
         item.title.let { bannerItemTitle.text = it.format(root.context) }
         item.subtitle?.let { bannerItemSubtitle.text = it.format(root.context) }
+        item.image?.let(bannerItemImage::loadImage)
     }
 }

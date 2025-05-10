@@ -10,7 +10,7 @@ inline fun <reified Dependency> Fragment.findDependency(): Dependency {
 
 @Suppress("UNCHECKED_CAST")
 fun <Dependency> Fragment.findDependenciesByClass(clazz: Class<Dependency>): Dependency {
-    return requireNotNull(allParents.firstOrNull { it::class == clazz } as? Dependency) {
+    return requireNotNull(allParents.firstOrNull { it::class as? Dependency != null } as? Dependency) {
         "Required dependency [$clazz] was null"
     }
 }

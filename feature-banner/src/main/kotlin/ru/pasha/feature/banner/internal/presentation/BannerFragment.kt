@@ -1,7 +1,6 @@
 package ru.pasha.feature.banner.internal.presentation
 
 import android.animation.ObjectAnimator
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,21 +18,23 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.pasha.common.di.findDependency
 import ru.pasha.common.extensions.dpToPx
 import ru.pasha.common.extensions.setText
 import ru.pasha.common.format
 import ru.pasha.common.orEmpty
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.feature.banner.api.BannerUiDependencies
 import ru.pasha.feature.banner.databinding.BannerFragmentBinding
 import javax.inject.Inject
 
+@Suppress("TooManyFunctions")
 internal class BannerFragment @Inject constructor(
-    private val viewModelFactory: BannerViewModel.Factory
+    private val viewModelFactory: BannerViewModel.Factory,
 ) : BaseFragment<BannerViewState, BannerViewModel, BannerFragmentBinding>(
     viewModelClass = BannerViewModel::class.java
 ) {
-
     private var autoScrollJob: Job? = null
     private val adapter = BannerAdapter()
 
@@ -47,13 +48,19 @@ internal class BannerFragment @Inject constructor(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): BannerFragmentBinding {
-        return BannerFragmentBinding.inflate(inflater, container, false)
+        return BannerFragmentBinding.inflate(inflater, container, false).apply {
+            bannerButton.setOnClickListener {
+                viewModel.navigateToAuth(
+                    findDependency<BannerUiDependencies>().navigateToAuthAction
+                )
+            }
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupViewPager()
+    override fun onStart() {
+        super.onStart()
         startAutoScroll()
+        setupBannerPager()
     }
 
     override fun render(viewState: BannerViewState) {
@@ -94,15 +101,18 @@ internal class BannerFragment @Inject constructor(
 
     override fun onPause() {
         cancelAutoScroll()
+        binding.bannerProgressIndicator.cancelProgress()
         super.onPause()
     }
 
     override fun onDestroyView() {
         cancelAutoScroll()
+        destroyBannerPager()
+        binding.bannerProgressIndicator.cancelProgress()
         super.onDestroyView()
     }
 
-    private fun setupViewPager() {
+    private fun setupBannerPager() {
         binding.bannerPager.apply {
             adapter = this@BannerFragment.adapter
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -114,6 +124,10 @@ internal class BannerFragment @Inject constructor(
                 }
             })
         }
+    }
+
+    private fun destroyBannerPager() {
+        binding.bannerPager.adapter = null
     }
 
     private fun startAutoScroll() {

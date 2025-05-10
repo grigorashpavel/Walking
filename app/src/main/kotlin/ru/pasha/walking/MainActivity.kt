@@ -1,6 +1,7 @@
 package ru.pasha.walking
 
 import android.os.Bundle
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentFactory
 import com.github.terrakok.cicerone.Screen
@@ -15,6 +16,7 @@ import kotlinx.coroutines.withContext
 import ru.pasha.common.di.ActivityScope
 import ru.pasha.common.extensions.isNightMode
 import ru.pasha.core.navigation.BaseNavigationActivity
+import ru.pasha.feature.banner.api.BannerUiDependencies
 import ru.pasha.network.api.AuthManager
 import ru.pasha.walking.auth.SessionStorage
 import ru.pasha.walking.di.DaggerActivityComponent
@@ -23,7 +25,7 @@ import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
 @ActivityScope
-class MainActivity : BaseNavigationActivity(), AuthManager {
+class MainActivity : BaseNavigationActivity(), AuthManager, BannerUiDependencies {
 
     @Inject
     lateinit var authSdk: YandexAuthSdk
@@ -50,9 +52,7 @@ class MainActivity : BaseNavigationActivity(), AuthManager {
 
     override fun logout() = router.exit()
 
-    private val authLauncher by lazy {
-        registerForActivityResult(authSdk.contract, ::handleResult)
-    }
+    private var authLauncher: ActivityResultLauncher<YandexAuthLoginOptions>? = null
 
     private var authDeferred: CompletableDeferred<String?> = CompletableDeferred()
 
@@ -60,6 +60,8 @@ class MainActivity : BaseNavigationActivity(), AuthManager {
         DaggerActivityComponent.factory()
             .create(this)
             .inject(this)
+
+        authLauncher = registerForActivityResult(authSdk.contract, ::handleResult)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setupWalkingAppTheme()
@@ -87,7 +89,7 @@ class MainActivity : BaseNavigationActivity(), AuthManager {
         authDeferred = CompletableDeferred(coroutineContext.job)
 
         withContext(Dispatchers.Main) {
-            authLauncher.launch(YandexAuthLoginOptions())
+            authLauncher?.launch(YandexAuthLoginOptions())
         }
 
         return authDeferred.await()?.let { key ->
@@ -106,4 +108,6 @@ class MainActivity : BaseNavigationActivity(), AuthManager {
         }
         setTheme(theme)
     }
+
+    override val navigateToAuthAction: suspend () -> Unit get() = { refreshSession() }
 }

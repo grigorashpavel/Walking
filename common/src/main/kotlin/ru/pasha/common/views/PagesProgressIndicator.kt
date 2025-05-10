@@ -125,7 +125,7 @@ class PagesProgressIndicator @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
-    private fun cancelProgress() {
+    fun cancelProgress() {
         progressAnimator?.cancel()
         progressAnimator = null
     }
