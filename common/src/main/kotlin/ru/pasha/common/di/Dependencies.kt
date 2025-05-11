@@ -4,6 +4,12 @@ import android.app.Activity
 import android.app.Application
 import androidx.fragment.app.Fragment
 
+inline fun <reified Dependency> Activity.findDependency(): Dependency {
+    return requireNotNull(this as? Dependency ?: application as? Dependency) {
+        "Required dependency [${Dependency::class.java}] was null"
+    }
+}
+
 inline fun <reified Dependency> Fragment.findDependency(): Dependency {
     return findDependenciesByClass(Dependency::class.java)
 }

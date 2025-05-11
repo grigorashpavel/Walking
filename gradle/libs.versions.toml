@@ -50,6 +50,9 @@ encryptedPrefs = "1.1.0-alpha06"
 # Coil - Images
 coil = "2.6.0"
 
+# Maps - OSM
+osmdroid = "6.1.16"
+
 [libraries]
 # Gradle plugins
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -106,6 +109,10 @@ androidx-securityCrypto = { module = "androidx.security:security-crypto", versio
 
 # Coil - Images
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+
+# Maps - OSM
+osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroid" }
+osmdroid-geopackage = { module = "org.osmdroid:osmdroid-geopackage", version.ref = "osmdroid" }
 
 [plugins]
 # Custom plugins

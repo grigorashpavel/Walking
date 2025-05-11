@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentFactory
+import com.github.terrakok.cicerone.Cicerone
+import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.yandex.authsdk.YandexAuthLoginOptions
@@ -13,18 +15,17 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.job
 import kotlinx.coroutines.withContext
-import ru.pasha.common.di.ActivityScope
+import ru.pasha.common.di.findDependency
 import ru.pasha.common.extensions.isNightMode
 import ru.pasha.core.navigation.BaseNavigationActivity
+import ru.pasha.core.navigation.NavigationHolder
 import ru.pasha.feature.banner.api.BannerUiDependencies
 import ru.pasha.network.api.AuthManager
 import ru.pasha.walking.auth.SessionStorage
 import ru.pasha.walking.di.DaggerActivityComponent
-import ru.pasha.walking.di.StartScreen
 import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
-@ActivityScope
 class MainActivity : BaseNavigationActivity(), AuthManager, BannerUiDependencies {
 
     @Inject
@@ -33,12 +34,19 @@ class MainActivity : BaseNavigationActivity(), AuthManager, BannerUiDependencies
     @Inject
     lateinit var sessionStorage: SessionStorage
 
-    @Inject
-    @StartScreen
-    lateinit var startScreen: Screen
+    private val startScreen: Screen by lazy {
+        findDependency<NavigationHolder>().startScreen
+    }
+
+    private val fragmentFactory: FragmentFactory by lazy {
+        findDependency<NavigationHolder>().factory
+    }
 
     @Inject
-    lateinit var fragmentFactory: FragmentFactory
+    override lateinit var cicerone: Cicerone<Router>
+
+    @Inject
+    override lateinit var router: Router
 
     override val navigator: AppNavigator by lazy {
         AppNavigator(

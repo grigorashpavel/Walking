@@ -46,4 +46,6 @@ dependencies {
     implementation(projects.network)
     implementation(projects.coreNavigation)
     implementation(projects.featureBanner)
+    implementation(projects.featureMap)
+    implementation(projects.featureHome)
 }

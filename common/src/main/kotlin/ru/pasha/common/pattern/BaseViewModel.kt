@@ -13,6 +13,13 @@ abstract class BaseViewModel<State, ViewState>(
     initialState: State,
 ) : ViewModel() {
     private val _state by lazy { MutableStateFlow<State>(initialState) }
+    protected var previousState: State? = null
+        private set
+    protected val previousViewState: ViewState? get() = previousState?.let(mapper::toViewState)
+
+    protected val state get() = _state.value
+    protected val viewState get() = mapper.toViewState(state)
+
     private val _sideEffects by lazy {
         MutableSharedFlow<SideEffect>(
             extraBufferCapacity = 6,
@@ -24,6 +31,7 @@ abstract class BaseViewModel<State, ViewState>(
     val sideEffects: Flow<SideEffect> = _sideEffects
 
     protected fun updateState(transformer: State.() -> State) {
+        previousState = _state.value
         _state.update(transformer)
     }
     protected fun sideEffect(effect: () -> SideEffect) = _sideEffects.tryEmit(effect())

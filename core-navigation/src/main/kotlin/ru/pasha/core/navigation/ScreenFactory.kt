@@ -2,8 +2,10 @@ package ru.pasha.core.navigation
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
+import ru.pasha.common.di.ApplicationScope
 import javax.inject.Inject
 
+@ApplicationScope
 class ScreenFactory @Inject constructor(
     private val instantiators: FragmentInstantiatorSet,
 ) : FragmentFactory() {

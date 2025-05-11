@@ -4,13 +4,13 @@ import dagger.Module
 import dagger.Provides
 import ru.pasha.feature.banner.api.BannerFeature
 import ru.pasha.feature.banner.api.BannerFeatureFactory
-import ru.pasha.walking.di.ActivityComponent
+import ru.pasha.walking.di.ApplicationComponent
 
 @Module
 interface BannerFeatureModule {
     companion object {
         @Provides
-        fun provideBannerFeature(withDependenciesComponent: ActivityComponent): BannerFeature {
+        fun provideBannerFeature(withDependenciesComponent: ApplicationComponent): BannerFeature {
             return BannerFeatureFactory.create(withDependenciesComponent)
         }
     }

@@ -9,7 +9,7 @@ import ru.pasha.feature.banner.api.BannerFeature
     modules = [BannerModule::class]
 )
 @BannerScope
-interface BannerComponent {
+internal interface BannerComponent {
     val feature: BannerFeature
 
     companion object {
