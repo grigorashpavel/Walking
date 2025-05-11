@@ -5,7 +5,10 @@ import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 
 internal class HomeMapper : BaseMapper<HomeState, HomeViewState>() {
     override fun toViewState(state: HomeState): HomeViewState {
-        return HomeViewState(categoryState = state.category.toState())
+        return HomeViewState(
+            categoryState = state.category.toState(),
+            markerButtonVisible = state.interactionModeEnabled
+        )
     }
 
     private fun Category.toState(): CategoriesWidgetView.State = when (this) {

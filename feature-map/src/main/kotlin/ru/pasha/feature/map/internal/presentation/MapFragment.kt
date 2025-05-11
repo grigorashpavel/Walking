@@ -5,32 +5,54 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.WindowInsetsCompat
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
 import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
+import org.osmdroid.views.overlay.Marker
+import ru.pasha.common.R
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
 import ru.pasha.feature.map.databinding.MapFragmentBinding
 import ru.pasha.feature.map.internal.MapControllerProvider
+import ru.pasha.feature.map.internal.entity
+import ru.pasha.feature.map.internal.point
 import javax.inject.Inject
 
+@Suppress("TooManyFunctions")
 internal class MapFragment @Inject constructor(
     private val viewModelFactory: MapViewModel.Factory,
-    private val mapControllerProvider: MapControllerProvider,
+    private val mapControllerProvider: MapControllerProvider
 ) : BaseFragment<MapViewState, MapViewModel, MapFragmentBinding>(
     viewModelClass = MapViewModel::class.java
 ) {
     private var mapListener: MapListener? = null
+    private var centerMarker: Marker? = null
+
+    private val markerIcon get() = ResourcesCompat.getDrawable(
+        resources, R.drawable.ic_default_marker_32, requireContext().theme
+    )
+
+    private val currentMarkers = hashMapOf<Int, Marker>()
+
+    private val location get() = binding.walkingMap.mapCenter.point()
 
     override fun createViewModel(): MapViewModel = viewModelFactory.create()
 
-    override fun onApplyInsets(insets: WindowInsetsCompat): WindowInsetsCompat {
-        return insets
+    override fun onApplyInsets(insets: WindowInsetsCompat): WindowInsetsCompat = insets
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Configuration.getInstance().apply {
+            userAgentValue = requireActivity().packageName
+            load(requireContext(), requireActivity().getPreferences(Context.MODE_PRIVATE))
+            isMapViewHardwareAccelerated = true
+        }
     }
 
     override fun getViewBinding(
@@ -40,26 +62,17 @@ internal class MapFragment @Inject constructor(
         return MapFragmentBinding.inflate(inflater, container, false).apply {
             with(walkingMap) {
                 setTileSource(TileSourceFactory.MAPNIK)
-
                 zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
                 setMultiTouchControls(true)
 
-                val aprelevkaLatitude = 55.5514
-                val aprelevkaLongitude = 37.0654
-                val startZoomLevel = 15.0
-
-                controller.setZoom(startZoomLevel)
-                controller.setCenter(GeoPoint(aprelevkaLatitude, aprelevkaLongitude))
+                centerMarker = Marker(this).apply {
+                    position = mapCenter.point()
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    icon = markerIcon
+                }
+                overlays.add(centerMarker)
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        Configuration.getInstance().userAgentValue = requireActivity().packageName
-        Configuration.getInstance()
-            .load(requireContext(), requireActivity().getPreferences(Context.MODE_PRIVATE))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,18 +80,17 @@ internal class MapFragment @Inject constructor(
         initMapListener()
     }
 
-    override fun render(viewState: MapViewState) = Unit
+    // Рендер можно использовать только для свойств настроек (видимость маркеров и тд, не центр и зум)
+    override fun render(viewState: MapViewState) {
+        renderCenteredMarker(viewState)
+        renderLocation(viewState)
+        renderZoom(viewState)
+        renderMarkers(viewState)
+
+        binding.walkingMap.invalidate()
+    }
 
     override fun consumeSideEffect(effect: SideEffect) = Unit
-
-    private fun getCurrentLocation(): ru.pasha.common.map.GeoPoint {
-        return binding.walkingMap.mapCenter.let { point ->
-            ru.pasha.common.map.GeoPoint(
-                lat = point.latitude.toFloat(),
-                lon = point.longitude.toFloat()
-            )
-        }
-    }
 
     override fun onResume() {
         super.onResume()
@@ -92,27 +104,71 @@ internal class MapFragment @Inject constructor(
 
     override fun onDestroyView() {
         destroyMapListener()
+        centerMarker?.closeInfoWindow()
+        centerMarker = null
         super.onDestroyView()
+    }
+
+    private fun renderCenteredMarker(viewState: MapViewState) {
+        centerMarker?.setVisible(viewState.isCenteredMarkerVisible)
+    }
+
+    private fun renderLocation(viewState: MapViewState) {
+        if (location == viewState.location || !viewState.updateMarker) return
+
+        binding.walkingMap.controller.setCenter(viewState.location)
+    }
+
+    private fun renderZoom(viewState: MapViewState) {
+        if (viewState.updateMarker) {
+            binding.walkingMap.controller.setZoom(viewState.zoom)
+        }
+    }
+
+    private fun renderMarkers(viewState: MapViewState) {
+        viewState.markersToRemove.forEach { marker ->
+            currentMarkers[marker.id]?.let { founded ->
+                currentMarkers.remove(marker.id)
+                val res = binding.walkingMap.overlays.remove(founded)
+                println("res=$res")
+            }
+        }
+        viewState.markersToDraw.forEach { marker ->
+            if (!currentMarkers.containsKey(marker.id)) {
+                currentMarkers[marker.id] = createPoiMarker(marker.color).also { m ->
+                    binding.walkingMap.overlays.add(m)
+                }
+            }
+        }
     }
 
     private fun initMapListener() {
         mapListener = object : MapListener {
             override fun onScroll(event: ScrollEvent?): Boolean {
-                mapControllerProvider.pointsSourceFlow.tryEmit(getCurrentLocation())
+                mapControllerProvider.setCurrentLocation(location.entity())
+                centerMarker?.position = location
                 return false
             }
 
             override fun onZoom(event: ZoomEvent?): Boolean {
-                mapControllerProvider.pointsSourceFlow.tryEmit(getCurrentLocation())
+                mapControllerProvider.setCurrentLocation(location.entity())
+                centerMarker?.position = location
                 return false
             }
         }.also { binding.walkingMap.addMapListener(it) }
     }
 
+    private fun createPoiMarker(@ColorInt color: Int): Marker {
+        return Marker(binding.walkingMap).apply {
+            position = location
+            icon = markerIcon
+            icon.setTint(color)
+        }
+    }
+
     private fun destroyMapListener() {
         binding.walkingMap.removeMapListener(mapListener)
         mapListener = null
-
         binding.walkingMap.onDetach()
     }
 }

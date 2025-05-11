@@ -12,7 +12,7 @@ import javax.inject.Inject
 class WalkingApp : Application(), NavigationHolder {
     override fun onCreate() {
         DaggerApplicationComponent.factory()
-            .create()
+            .create(applicationContext)
             .inject(this)
 
         super.onCreate()

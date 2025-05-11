@@ -1,5 +1,7 @@
 package ru.pasha.walking.di
 
+import android.content.Context
+import dagger.BindsInstance
 import dagger.Component
 import ru.pasha.common.di.ApplicationScope
 import ru.pasha.feature.banner.api.BannerDependencies
@@ -14,7 +16,7 @@ import ru.pasha.walking.di.features.FeaturesModule
 interface ApplicationComponent : BannerDependencies, MapDependencies, HomeDependencies {
     @Component.Factory
     interface Factory {
-        fun create(): ApplicationComponent
+        fun create(@BindsInstance context: Context): ApplicationComponent
     }
 
     fun inject(application: WalkingApp)

@@ -1,3 +1,13 @@
 package ru.pasha.feature.map.internal.presentation
 
-internal data class MapViewState(val t: String)
+import org.osmdroid.util.GeoPoint
+import ru.pasha.common.map.Marker
+
+internal data class MapViewState(
+    val isCenteredMarkerVisible: Boolean,
+    val zoom: Double,
+    val location: GeoPoint,
+    val updateMarker: Boolean,
+    val markersToDraw: List<Marker>,
+    val markersToRemove: List<Marker>
+)

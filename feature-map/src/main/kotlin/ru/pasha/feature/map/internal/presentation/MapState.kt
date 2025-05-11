@@ -1,3 +1,14 @@
 package ru.pasha.feature.map.internal.presentation
 
-internal data class MapState(val t: String)
+import ru.pasha.common.map.GeoPoint
+import ru.pasha.common.map.Marker
+
+data class MapState(
+    val zoom: Double,
+    val center: GeoPoint,
+    val centerMarkerVisibility: Boolean,
+    val createMarkerOptionEnabled: Boolean,
+    val createdMarkers: List<Marker>,
+
+    val stateUpdatingFlag: Boolean,
+)

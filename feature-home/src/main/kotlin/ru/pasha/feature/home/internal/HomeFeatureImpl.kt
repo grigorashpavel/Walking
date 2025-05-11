@@ -5,8 +5,10 @@ import ru.pasha.core.navigation.FragmentInstantiator
 import ru.pasha.core.navigation.FragmentInstantiatorDelegate
 import ru.pasha.core.navigation.FragmentProvidersMap
 import ru.pasha.feature.home.api.HomeFeature
+import ru.pasha.feature.home.internal.di.HomeScope
 import javax.inject.Inject
 
+@HomeScope
 internal class HomeFeatureImpl @Inject constructor(
     private val screenFactory: HomeScreenFactory,
     fragmentMap: FragmentProvidersMap,

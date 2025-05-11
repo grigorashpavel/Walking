@@ -38,4 +38,13 @@
     <color name="walking_app_banner_soft_inactive_color_light">@color/walking_app_night_0</color>
     <color name="walking_app_banner_soft_inactive_color_night">@color/walking_app_light_0</color>
     <color name="walking_app_banner_active_color">@color/walking_app_night_500</color>
+
+    <!-- Markers Colors -->
+    <color name="walking_app_marker_1">#FF6F61</color>
+    <color name="walking_app_marker_2">#FFD700</color>
+    <color name="walking_app_marker_3">#9D00FF</color>
+    <color name="walking_app_marker_4">#2EE6D6</color>
+    <color name="walking_app_marker_5">#FF8C42</color>
+    <color name="walking_app_marker_6">#C8FF3D</color>
+
 </resources>

@@ -2,8 +2,7 @@ package ru.pasha.feature.home.api
 
 import androidx.fragment.app.FragmentFactory
 import com.github.terrakok.cicerone.Screen
-import kotlinx.coroutines.flow.Flow
-import ru.pasha.common.map.GeoPoint
+import ru.pasha.common.map.MapController
 
 interface HomeDependencies {
     val mapProvider: WalkingMapProvider
@@ -12,5 +11,5 @@ interface HomeDependencies {
 interface WalkingMapProvider {
     val fragmentFactory: FragmentFactory
     fun mapFragmentScreen(): Screen
-    val pointsProvider: Flow<GeoPoint>
+    val mapController: MapController
 }

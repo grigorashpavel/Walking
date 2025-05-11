@@ -5,6 +5,7 @@ import ru.pasha.feature.home.api.HomeDependencies
 import ru.pasha.feature.home.api.HomeFeature
 
 @Component(dependencies = [HomeDependencies::class], modules = [HomeModule::class])
+@HomeScope
 interface HomeComponent {
     val feature: HomeFeature
 

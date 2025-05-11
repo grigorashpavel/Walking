@@ -1,10 +1,7 @@
 package ru.pasha.feature.home.internal.presentation
 
-import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.feature.home.api.WalkingMapProvider
 import ru.pasha.feature.home.internal.view.CategoriesWidgetView
@@ -13,13 +10,8 @@ internal class HomeViewModel @AssistedInject constructor(
     walkingMapProvider: WalkingMapProvider,
 ) : BaseViewModel<HomeState, HomeViewState>(
     mapper = HomeMapper(),
-    initialState = HomeState(category = Category.Nature)
+    initialState = HomeState(category = Category.Nature, interactionModeEnabled = false),
 ) {
-    init {
-        walkingMapProvider.pointsProvider.onEach { point ->
-            println("Home VM: $point")
-        }.launchIn(viewModelScope)
-    }
 
     fun categoriesStateSelected(state: CategoriesWidgetView.State) {
         val category = when (state) {
@@ -29,6 +21,10 @@ internal class HomeViewModel @AssistedInject constructor(
 
         if (category == this.state.category) return
         updateState { copy(category = category) }
+    }
+
+    fun toggleInteractionMode(target: Boolean) {
+        updateState { copy(interactionModeEnabled = target) }
     }
 
     private fun CategoriesWidgetView.Category.toSimpleCategory(): Category {
