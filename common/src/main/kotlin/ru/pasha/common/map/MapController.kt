@@ -17,4 +17,5 @@ interface MapController {
     fun removeMarkers()
     fun removeMarker(marker: Marker)
     suspend fun buildRoute(name: String?): Text?
+    fun accessLocation()
 }

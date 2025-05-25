@@ -23,6 +23,8 @@ internal class MapControllerProvider @Inject constructor(
 ) : MapController {
     val controllerFlow = MutableStateFlow(createDefaultState())
 
+    var locationCallback: () -> Unit = {}
+
     override fun setCurrentLocation(point: GeoPoint) {
         update { copy(center = point) }
     }
@@ -72,6 +74,10 @@ internal class MapControllerProvider @Inject constructor(
 
     override fun removeMarkers() {
         update { copy(createdMarkers = emptyList()) }
+    }
+
+    override fun accessLocation() {
+        locationCallback()
     }
 
     override suspend fun buildRoute(name: String?): Text? {

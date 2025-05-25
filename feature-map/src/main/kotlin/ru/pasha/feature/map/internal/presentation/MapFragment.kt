@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.ColorInt
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,6 +17,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import ru.pasha.common.R
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
@@ -28,7 +31,8 @@ import javax.inject.Inject
 @Suppress("TooManyFunctions")
 internal class MapFragment @Inject constructor(
     private val viewModelFactory: MapViewModel.Factory,
-    private val mapControllerProvider: MapControllerProvider
+    private val mapControllerProvider: MapControllerProvider,
+    private val permissionManager: MapPermissionManager,
 ) : BaseFragment<MapViewState, MapViewModel, MapFragmentBinding>(
     viewModelClass = MapViewModel::class.java
 ) {
@@ -45,6 +49,10 @@ internal class MapFragment @Inject constructor(
 
     private val location get() = binding.walkingMap.mapCenter.point()
 
+    private var permissionLauncher: ActivityResultLauncher<Void?>? = null
+
+    private var locationOverlay: MyLocationNewOverlay? = null
+
     override fun createViewModel(): MapViewModel = viewModelFactory.create()
 
     override fun onApplyInsets(insets: WindowInsetsCompat): WindowInsetsCompat = insets
@@ -55,6 +63,10 @@ internal class MapFragment @Inject constructor(
             userAgentValue = requireActivity().packageName
             load(requireContext(), requireActivity().getPreferences(Context.MODE_PRIVATE))
             isMapViewHardwareAccelerated = true
+        }
+
+        permissionLauncher = permissionManager.registerPermissionLauncher(this) { granted ->
+            viewModel.handlePermissionResult(granted)
         }
     }
 
@@ -81,6 +93,7 @@ internal class MapFragment @Inject constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initMapListener()
+        viewModel.checkLocationPermissions()
     }
 
     // Рендер можно использовать только для свойств настроек (видимость маркеров и тд, не центр и зум)
@@ -94,22 +107,50 @@ internal class MapFragment @Inject constructor(
         binding.walkingMap.invalidate()
     }
 
-    override fun consumeSideEffect(effect: SideEffect) = Unit
+    override fun consumeSideEffect(effect: SideEffect) = when (effect) {
+        is MapSideEffect.RequestLocationPermission -> {
+            permissionLauncher?.launch(null) ?: Unit
+        }
+
+        is MapSideEffect.StartListenLocation -> {
+            setupLocationOverlay()
+        }
+
+        else -> Unit
+    }
+
+    private fun setupLocationOverlay() {
+        val location = MyLocationNewOverlay(
+            GpsMyLocationProvider(requireContext()),
+            binding.walkingMap,
+        ).apply {
+            enableMyLocation()
+            enableFollowLocation()
+            setPersonAnchor(0.5f, 0.895f)
+            runOnFirstFix {
+                activity?.runOnUiThread {
+                    locationOverlay?.myLocation?.let(binding.walkingMap.controller::animateTo)
+                }
+            }
+        }
+        binding.walkingMap.overlays.add(location)
+        locationOverlay = location
+    }
 
     override fun onResume() {
         super.onResume()
         binding.walkingMap.onResume()
+        locationOverlay?.enableMyLocation()
     }
 
     override fun onPause() {
         super.onPause()
         binding.walkingMap.onPause()
+        locationOverlay?.disableMyLocation()
     }
 
     override fun onDestroyView() {
         destroyMap()
-        centerMarker?.closeInfoWindow()
-        centerMarker = null
         super.onDestroyView()
     }
 
@@ -195,6 +236,13 @@ internal class MapFragment @Inject constructor(
         binding.walkingMap.removeMapListener(mapListener)
         mapListener = null
         binding.walkingMap.onDetach()
+
+        centerMarker?.closeInfoWindow()
+        centerMarker = null
+
+        route = null
+        currentMarkers.clear()
+        locationOverlay = null
     }
 
     private companion object {

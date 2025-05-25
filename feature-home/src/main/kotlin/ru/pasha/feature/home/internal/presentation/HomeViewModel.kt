@@ -70,6 +70,10 @@ internal class HomeViewModel @AssistedInject constructor(
         }
     }
 
+    fun accessLocation() {
+        walkingMapProvider.mapController.accessLocation()
+    }
+
     fun toggleInteractionMode(target: Boolean) {
         updateState { copy(interactionModeEnabled = target) }
     }

@@ -138,6 +138,9 @@ internal class HomeFragment @Inject constructor(
         binding.homeBuildRouteButton.setOnClickListener {
             viewModel.buildRoute()
         }
+        binding.homeLocationButton.setOnClickListener {
+            viewModel.accessLocation()
+        }
     }
 
     private fun startMapInteraction() {
