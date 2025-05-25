@@ -1,7 +1,7 @@
 package ru.pasha.walking.auth
 
 import android.content.SharedPreferences
-import ru.pasha.common.di.ActivityScope
+import ru.pasha.common.di.ApplicationScope
 import javax.inject.Inject
 
 interface SessionStorage {
@@ -10,7 +10,7 @@ interface SessionStorage {
     fun clearSession()
 }
 
-@ActivityScope
+@ApplicationScope
 class EncryptedSessionStorage @Inject constructor(
     private val prefs: SharedPreferences
 ) : SessionStorage {

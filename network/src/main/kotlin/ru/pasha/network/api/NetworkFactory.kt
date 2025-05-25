@@ -7,11 +7,21 @@ object NetworkFactory {
         deviceIdProvider: () -> String,
         versionProvider: () -> String,
         localeProvider: () -> String,
-        authManager: AuthManager
+        authController: AuthController
     ): ApiFactory = createApiFactory(
         deviceIdProvider,
         versionProvider,
         localeProvider,
-        authManager
+        authController
+    )
+
+    fun createSessionApi(
+        deviceIdProvider: () -> String,
+        versionProvider: () -> String,
+        localeProvider: () -> String,
+    ): SessionApi = ru.pasha.network.internal.createSessionApi(
+        deviceIdProvider = deviceIdProvider,
+        versionProvider = versionProvider,
+        localeProvider = localeProvider
     )
 }

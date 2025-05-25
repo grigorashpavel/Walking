@@ -5,41 +5,50 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.Interceptor
 import okhttp3.Response
-import ru.pasha.network.api.AuthManager
+import ru.pasha.network.api.AuthController
 import ru.pasha.network.internal.HeaderType
 import java.net.HttpURLConnection
 
 internal class AuthorizationInterceptor(
-    private val authManager: AuthManager,
+    private val authController: AuthController,
     private val authHeader: HeaderType,
 ) : Interceptor {
 
     private val tokenRefreshMutex = Mutex()
 
+    @Volatile
+    private var token = authController.getSessionKey()
+
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        val initialResponse = chain.proceed(request)
+        var token = this.token
 
-        if (initialResponse.code != HttpURLConnection.HTTP_UNAUTHORIZED) {
-            return initialResponse
-        }
-
-        val tokenUpdated = runBlocking {
-            tokenRefreshMutex.withLock {
-                authManager.refreshSession()
-            }
-        }
-        val token = authManager.getSessionKey()
-
-        if (!tokenUpdated || token == null) {
-            authManager.logout()
-            return initialResponse
-        }
-
-        val newRequest = request.newBuilder()
-            .header(authHeader.value, token)
+        val request = chain.request().newBuilder()
+            .header(authHeader.value, token.orEmpty())
             .build()
 
-        return chain.proceed(newRequest)
+        val initialResponse = chain.proceed(request)
+        if (
+            initialResponse.code != HttpURLConnection.HTTP_UNAUTHORIZED &&
+            initialResponse.code != HttpURLConnection.HTTP_INTERNAL_ERROR
+        ) {
+            return initialResponse
+        }
+
+        runBlocking {
+            tokenRefreshMutex.withLock {
+                authController.refreshSession()
+                this@AuthorizationInterceptor.token = authController.getSessionKey()
+                token = this@AuthorizationInterceptor.token
+            }
+        }
+        val newRequest = chain.request().newBuilder()
+            .header(authHeader.value, token.orEmpty())
+            .build()
+
+        val response = chain.proceed(newRequest)
+        if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
+            authController.logout()
+        }
+        return response
     }
 }

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.walking.kotlin)
     alias(libs.plugins.walking.detekt)
     alias(libs.plugins.ksp)
+    kotlin(libs.plugins.serialization.get().pluginId) version libs.plugins.serialization.get().version.displayName
 }
 
 android {
@@ -26,6 +27,12 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofitSerialization)
+    implementation(libs.serializationJson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttpLogging)
 
     implementation(libs.dagger)
     ksp(libs.daggerCompiler)

@@ -34,9 +34,9 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:ellipsize="end"
+            android:textAlignment="viewStart"
             android:gravity="center_horizontal"
-            android:maxLines="2"
-            android:text="Текст про стандартный режим построения маршрута"
+            android:text="Универсальный маршрут, сочетающий лучшие практики всех категорий:\n• Баланс природных и городских зон\n• Учёт удобства пешеходных дорожек\n• Популярные достопримечательности\n• Оптимальное время перемещения\nАвтоматически адаптируется под ваше местоположение и время дня, используя коллективный опыт пользователей.\n\nСоздан людьми для людей"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

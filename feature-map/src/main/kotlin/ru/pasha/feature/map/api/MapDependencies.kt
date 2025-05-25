@@ -1,9 +1,11 @@
 package ru.pasha.feature.map.api
 
 import ru.pasha.common.map.GeoPoint
+import ru.pasha.network.api.ApiFactory
 
 interface MapDependencies {
     val mapSettingsProvider: MapSettingsProvider
+    val apiFactory: ApiFactory
 }
 
 interface MapSettingsProvider {

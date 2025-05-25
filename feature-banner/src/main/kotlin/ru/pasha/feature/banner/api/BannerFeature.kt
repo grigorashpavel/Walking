@@ -4,5 +4,5 @@ import com.github.terrakok.cicerone.Screen
 import ru.pasha.core.navigation.FragmentInstantiator
 
 interface BannerFeature : FragmentInstantiator {
-    fun getFeaturePreviewScreen(): Screen
+    fun getBannerScreen(): Screen
 }

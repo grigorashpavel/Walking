@@ -12,16 +12,8 @@ internal class MapViewModel @AssistedInject constructor(
     mapControllerProvider: MapControllerProvider,
 ) : BaseViewModel<MapState, MapViewState>(
     mapper = MapMapper(),
-    initialState = MapState(
-        zoom = mapControllerProvider.zoom,
-        center = mapControllerProvider.currentLocation,
-        centerMarkerVisibility = mapControllerProvider.isMarkerVisible,
-        createMarkerOptionEnabled = false,
-        createdMarkers = listOf(),
-        stateUpdatingFlag = true
-    )
+    initialState = mapControllerProvider.createDefaultState()
 ) {
-
     init {
         mapControllerProvider.controllerFlow
             .onEach { updateState { it } }

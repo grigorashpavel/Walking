@@ -17,4 +17,8 @@
     <string name="walking_app_intro_slide4_subtitle">Created by Pavel Grigorash\nStudent of group IKBO–06–21</string>
 
     <string name="walking_app_intro_button_text">Start Exploring</string>
+
+    <string name="walking_app_max_pois_limit_exeeded">POI limit reached</string>
+
+    <string name="walking_app_possible_poi_not_fetched">No suitable POIs found - try again later</string>
 </resources>

@@ -11,6 +11,8 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
+import ru.pasha.common.format
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
 import ru.pasha.feature.home.api.WalkingMapProvider
@@ -71,6 +73,13 @@ internal class HomeFragment @Inject constructor(
     override fun render(viewState: HomeViewState) {
         binding.homeCategoriesWidget.setState(viewState.categoryState)
         binding.homeMarkerButton.isVisible = viewState.markerButtonVisible
+
+        binding.homeBottomSheet.render(
+            viewState.markers,
+            onRemoveMarkers = viewModel::removeMarkers,
+            onRemoveMarker = viewModel::removeMarker,
+        )
+        renderPoisButton(viewState)
     }
 
     override fun onResume() {
@@ -124,7 +133,10 @@ internal class HomeFragment @Inject constructor(
             endMapInteraction()
         }
         binding.homeMarkerButton.setOnClickListener {
-            walkingMapProvider.mapController.createMarker()
+            viewModel.tryCreateMarker()
+        }
+        binding.homeBuildRouteButton.setOnClickListener {
+            viewModel.buildRoute()
         }
     }
 
@@ -135,7 +147,7 @@ internal class HomeFragment @Inject constructor(
         bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         bottomSheetBehavior?.isDraggable = true
 
-        toggleMapState(willInteraction = true)
+        viewModel.toggleMapState(willInteraction = true)
         viewModel.toggleInteractionMode(true)
     }
 
@@ -146,8 +158,17 @@ internal class HomeFragment @Inject constructor(
         bottomSheetBehavior?.state = BottomSheetBehavior.STATE_HALF_EXPANDED
         bottomSheetBehavior?.isDraggable = false
 
-        toggleMapState(willInteraction = false)
+        viewModel.toggleMapState(willInteraction = false)
         viewModel.toggleInteractionMode(false)
+    }
+
+    private fun renderPoisButton(viewState: HomeViewState) {
+        binding.homeMarkerButton.isEnabled = viewState.addMarkerEnabled
+        binding.homeMarkerButton.alpha = if (viewState.addMarkerEnabled) {
+            ACTIVE_ALPHA
+        } else {
+            INACTIVE_ALPHA
+        }
     }
 
     private fun setupCategoriesListener() {
@@ -158,19 +179,39 @@ internal class HomeFragment @Inject constructor(
         binding.homeCategoriesWidget.setStateListener {}
     }
 
-    private fun toggleMapState(willInteraction: Boolean) {
-        if (!willInteraction) {
-            walkingMapProvider.mapController.restoreMap()
-            return
+    override fun consumeSideEffect(effect: SideEffect) = when (effect) {
+        is FirstPoi -> {
+            val message = effect.title
+                .format(requireContext())
+                .toString() + "\n" + effect.subtitle.format(requireContext()).toString()
+            showSnackbar(message)
         }
 
-        walkingMapProvider.mapController.setCenterMarkerVisibility(true)
-        walkingMapProvider.mapController.toggleCreateMarkerFeature(true)
+        is Error -> showSnackbar(effect.title.format(requireContext()).toString())
+
+        else -> {}
     }
 
-    override fun consumeSideEffect(effect: SideEffect) = Unit
+    private fun showSnackbar(message: String) {
+        Snackbar.make(
+            binding.root,
+            message,
+            Snackbar.LENGTH_LONG,
+        ).apply {
+            setBackgroundTint(
+                resources.getColor(
+                    ru.pasha.common.R.color.walking_app_light_500,
+                    requireActivity().theme
+                )
+            )
+            anchorView = binding.homeButtonsContainer
+        }.show()
+    }
 
     private companion object {
         const val SHEET_HALF_RATIO = .5f
+
+        const val ACTIVE_ALPHA = 1f
+        const val INACTIVE_ALPHA = 0.5f
     }
 }

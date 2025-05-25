@@ -21,7 +21,7 @@ interface MapFeatureModule {
         }
 
         @Provides
-        fun provideMarkerVisibility(context: Context): MapSettingsProvider {
+        fun provideSettings(context: Context): MapSettingsProvider {
             return object : MapSettingsProvider {
                 override val startLocation: GeoPoint = GeoPoint(lat = 55.544998f, lon = 37.073382f)
                 override val startZoom: Double = 15.0

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.walking.library)
     alias(libs.plugins.walking.kotlin)
     alias(libs.plugins.walking.detekt)
+    kotlin(libs.plugins.serialization.get().pluginId) version libs.plugins.serialization.get().version.displayName
 }
 
 android {

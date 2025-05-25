@@ -11,8 +11,8 @@ internal class MapMapper : BaseMapper<MapState, MapViewState>() {
             isCenteredMarkerVisible = state.centerMarkerVisibility,
             zoom = state.zoom,
             location = state.center.point(),
-            updateMarker = state.stateUpdatingFlag,
             markersToDraw = state.createdMarkers,
+            route = state.route?.path?.map { it.point() },
             markersToRemove = previousState
                 ?.createdMarkers
                 ?.minus(state.createdMarkers.toSet())

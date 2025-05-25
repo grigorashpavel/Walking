@@ -26,6 +26,13 @@ class CategoriesWidgetView @JvmOverloads constructor(
 
     private val tabListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
+            if (tab != null) {
+                tab.text = when (binding.homeCategoryPager.adapter?.getItemViewType(tab.position)) {
+                    R.layout.tab_user_categories -> "Ваши настройки"
+                    R.layout.tab_default_category -> "Стандартный"
+                    else -> ""
+                }
+            }
             val state = if (tab?.position == 0) State.User(null) else State.Default
             stateListener?.invoke(state)
         }
@@ -75,11 +82,11 @@ class CategoriesWidgetView @JvmOverloads constructor(
             binding.homeCategoryPager,
             false
         ) { tab, _ ->
-            tab.text = when (binding.homeCategoryPager.adapter?.getItemViewType(tab.position)) {
-                R.layout.tab_user_categories -> "Ваши настройки"
-                R.layout.tab_default_category -> "Стандартный"
-                else -> ""
-            }
+//            tab.text = when (binding.homeCategoryPager.adapter?.getItemViewType(tab.position)) {
+//                R.layout.tab_user_categories -> "Ваши настройки"
+//                R.layout.tab_default_category -> "Стандартный"
+//                else -> ""
+//            }
         }.attach()
         binding.homeCategoriesTabWidget.addOnTabSelectedListener(tabListener)
     }

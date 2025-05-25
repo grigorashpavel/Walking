@@ -15,6 +15,7 @@ import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 import ru.pasha.common.R
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
@@ -39,6 +40,8 @@ internal class MapFragment @Inject constructor(
     )
 
     private val currentMarkers = hashMapOf<Int, Marker>()
+
+    private var route: Polyline? = null
 
     private val location get() = binding.walkingMap.mapCenter.point()
 
@@ -86,6 +89,7 @@ internal class MapFragment @Inject constructor(
         renderLocation(viewState)
         renderZoom(viewState)
         renderMarkers(viewState)
+        renderRoute(viewState)
 
         binding.walkingMap.invalidate()
     }
@@ -103,10 +107,35 @@ internal class MapFragment @Inject constructor(
     }
 
     override fun onDestroyView() {
-        destroyMapListener()
+        destroyMap()
         centerMarker?.closeInfoWindow()
         centerMarker = null
         super.onDestroyView()
+    }
+
+    private fun renderRoute(viewState: MapViewState) {
+        with(binding.walkingMap) {
+            if (viewState.route == null) {
+                route?.let(overlays::remove)
+                route = null
+                return
+            }
+            if (route != null) return
+
+            Polyline(this).apply {
+                setPoints(viewState.route)
+                outlinePaint.color =
+                    ResourcesCompat.getColor(
+                        resources,
+                        R.color.walking_app_marker_1,
+                        requireContext().theme
+                    )
+                outlinePaint.strokeWidth = ROUTE_WIDTH
+            }.let {
+                this@MapFragment.route = it
+                overlays.add(it)
+            }
+        }
     }
 
     private fun renderCenteredMarker(viewState: MapViewState) {
@@ -114,23 +143,18 @@ internal class MapFragment @Inject constructor(
     }
 
     private fun renderLocation(viewState: MapViewState) {
-        if (location == viewState.location || !viewState.updateMarker) return
-
         binding.walkingMap.controller.setCenter(viewState.location)
     }
 
     private fun renderZoom(viewState: MapViewState) {
-        if (viewState.updateMarker) {
-            binding.walkingMap.controller.setZoom(viewState.zoom)
-        }
+        binding.walkingMap.controller.setZoom(viewState.zoom)
     }
 
     private fun renderMarkers(viewState: MapViewState) {
         viewState.markersToRemove.forEach { marker ->
             currentMarkers[marker.id]?.let { founded ->
                 currentMarkers.remove(marker.id)
-                val res = binding.walkingMap.overlays.remove(founded)
-                println("res=$res")
+                binding.walkingMap.overlays.remove(founded)
             }
         }
         viewState.markersToDraw.forEach { marker ->
@@ -152,10 +176,11 @@ internal class MapFragment @Inject constructor(
 
             override fun onZoom(event: ZoomEvent?): Boolean {
                 mapControllerProvider.setCurrentLocation(location.entity())
+                event?.zoomLevel?.let(mapControllerProvider::setZoom)
                 centerMarker?.position = location
                 return false
             }
-        }.also { binding.walkingMap.addMapListener(it) }
+        }.also(binding.walkingMap::addMapListener)
     }
 
     private fun createPoiMarker(@ColorInt color: Int): Marker {
@@ -166,9 +191,13 @@ internal class MapFragment @Inject constructor(
         }
     }
 
-    private fun destroyMapListener() {
+    private fun destroyMap() {
         binding.walkingMap.removeMapListener(mapListener)
         mapListener = null
         binding.walkingMap.onDetach()
+    }
+
+    private companion object {
+        const val ROUTE_WIDTH = 6f
     }
 }

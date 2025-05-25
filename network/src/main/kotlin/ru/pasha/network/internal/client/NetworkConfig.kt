@@ -28,7 +28,7 @@ internal data class NetworkConfig(
 
 @Suppress("MagicNumber")
 internal fun createNetworkConfig() = NetworkConfig(
-    baseUrl = "https://walking-app.ru/api",
+    baseUrl = "https://walking-app.ru/api/",
     connectTimeout = 15L,
     writeTimeout = 15L,
     readTimeout = 15L,

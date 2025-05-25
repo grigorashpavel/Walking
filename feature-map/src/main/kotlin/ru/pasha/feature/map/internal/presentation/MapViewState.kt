@@ -7,7 +7,7 @@ internal data class MapViewState(
     val isCenteredMarkerVisible: Boolean,
     val zoom: Double,
     val location: GeoPoint,
-    val updateMarker: Boolean,
     val markersToDraw: List<Marker>,
-    val markersToRemove: List<Marker>
+    val markersToRemove: List<Marker>,
+    val route: List<GeoPoint>?,
 )

@@ -11,5 +11,5 @@ internal class BannerFeatureImpl @Inject constructor(
     private val screenFactory: BannerScreenFactory,
     fragmentsMap: FragmentProvidersMap
 ) : BannerFeature, FragmentInstantiator by FragmentInstantiatorDelegate(fragmentsMap) {
-    override fun getFeaturePreviewScreen(): Screen = screenFactory.getBannerScreen()
+    override fun getBannerScreen(): Screen = screenFactory.getBannerScreen()
 }

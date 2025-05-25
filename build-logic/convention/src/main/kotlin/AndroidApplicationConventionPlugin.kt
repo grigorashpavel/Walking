@@ -147,7 +147,6 @@ private fun Project.loadSignSecrets(buildType: ApplicationBuildSettings.BuildTyp
 }
 
 private fun Project.configureSigning(extension: ApplicationExtension, secrets: SignSecrets) {
-    println(secrets)
     extension.signingConfigs {
         getByName(ApplicationBuildSettings.BuildType.Debug.getName()) {
             storeFile = rootProject.file("keystores/debug.p12")

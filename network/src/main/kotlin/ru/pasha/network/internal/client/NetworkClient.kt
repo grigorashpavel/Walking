@@ -21,7 +21,7 @@ internal class NetworkClient(
             connectionPool(config.connectionPool)
             dispatcher(config.dispatcher)
 
-            interceptors.forEach { addInterceptor(it) }
+            interceptors.forEach(::addInterceptor)
 
             if (BuildConfig.DEBUG) {
                 addInterceptor(HttpLoggingInterceptor().apply {
