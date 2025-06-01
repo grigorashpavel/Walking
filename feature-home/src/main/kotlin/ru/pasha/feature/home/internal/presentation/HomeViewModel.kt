@@ -1,6 +1,7 @@
 package ru.pasha.feature.home.internal.presentation
 
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
@@ -12,21 +13,25 @@ import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.Marker
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.feature.home.api.HomeArguments
 import ru.pasha.feature.home.api.HomeNavigationProvider
 import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 
 internal class HomeViewModel @AssistedInject constructor(
     private val walkingMapProvider: WalkingMapProvider,
     private val navigationProvider: HomeNavigationProvider,
+    @Assisted
+    private val homeArguments: HomeArguments,
 ) : BaseViewModel<HomeState, HomeViewState>(
     mapper = HomeMapper(walkingMapProvider.mapController::isReachedMaxMarkers),
     initialState = HomeState(
         category = Category.Nature,
-        interactionModeEnabled = false,
+        interactionModeEnabled = homeArguments.route != null,
         markers = emptyList(),
         isLoading = false,
         walkingModeEnabled = false,
-        route = null,
+        route = homeArguments.route,
+        previewModeEnabled = homeArguments.route != null,
     ),
 ) {
     private var isFirstPoint = true
@@ -49,6 +54,11 @@ internal class HomeViewModel @AssistedInject constructor(
             }
             .launchIn(viewModelScope)
 
+        homeArguments.route?.let {
+            walkingMapProvider.mapController.setRoute(it)
+            walkingMapProvider.mapController.setPreviewMode(true)
+        }
+
         walkingMapProvider.mapController.route
             .onEach { route ->
                 updateState { copy(route = route) }
@@ -62,6 +72,7 @@ internal class HomeViewModel @AssistedInject constructor(
 
     fun toggleWalkingMode() {
         updateState {
+            if (!walkingModeEnabled) accessLocation()
             walkingMapProvider.mapController.setWalkingMode(!walkingModeEnabled)
             copy(walkingModeEnabled = !walkingModeEnabled)
         }
@@ -108,7 +119,12 @@ internal class HomeViewModel @AssistedInject constructor(
     }
 
     fun toggleInteractionMode(target: Boolean) {
-        updateState { copy(interactionModeEnabled = target) }
+        if (target) {
+            updateState { copy(interactionModeEnabled = true) }
+        } else {
+            walkingMapProvider.mapController.setPreviewMode(false)
+            updateState { copy(interactionModeEnabled = false, previewModeEnabled = false) }
+        }
     }
 
     fun toggleMapState(willInteraction: Boolean) {
@@ -135,7 +151,7 @@ internal class HomeViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(): HomeViewModel
+        fun create(arguments: HomeArguments): HomeViewModel
     }
 }
 

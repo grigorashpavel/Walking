@@ -36,8 +36,6 @@ abstract class BindingFragment<VB : ViewBinding> : NavigationProvider, Fragment(
     protected abstract fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
 
     protected open fun onApplyInsets(insets: WindowInsetsCompat): WindowInsetsCompat {
-        applyColorSchemeWithInsets()
-
         val barsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
         val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
 

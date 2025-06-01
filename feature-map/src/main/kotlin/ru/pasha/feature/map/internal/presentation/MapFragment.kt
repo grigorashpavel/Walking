@@ -95,7 +95,6 @@ internal class MapFragment @Inject constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initMapListener()
-        viewModel.checkLocationPermissions()
     }
 
     // Рендер можно использовать только для свойств настроек (видимость маркеров и тд, не центр и зум)

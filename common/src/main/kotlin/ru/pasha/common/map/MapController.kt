@@ -11,6 +11,7 @@ interface MapController {
     fun toggleCreateMarkerFeature(isEnabled: Boolean)
     fun restoreMap()
     fun setWalkingMode(enabled: Boolean)
+    fun setPreviewMode(enabled: Boolean)
 
     val markers: Flow<List<Marker>>
     val route: Flow<Route?>
@@ -19,5 +20,6 @@ interface MapController {
     fun removeMarkers()
     fun removeMarker(marker: Marker)
     suspend fun buildRoute(name: String?): Text?
+    fun setRoute(route: Route)
     fun accessLocation()
 }

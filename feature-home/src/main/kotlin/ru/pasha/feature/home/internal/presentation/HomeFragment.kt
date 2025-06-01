@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
@@ -16,6 +19,7 @@ import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.format
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.common.pattern.extractScreenParams
 import ru.pasha.feature.home.R
 import ru.pasha.feature.home.databinding.HomeFragmentBinding
 import ru.pasha.feature.home.internal.view.HomeBottomSheetCallback
@@ -32,6 +36,8 @@ internal class HomeFragment @Inject constructor(
 ) {
     private val cicerone = Cicerone.create(Router())
 
+    private var previousState: HomeViewState? = null
+
     private var bottomSheetBehavior: BottomSheetBehavior<HomeBottomSheetView>? = null
     private var bottomSheetCallback: BottomSheetBehavior.BottomSheetCallback? = null
 
@@ -46,9 +52,13 @@ internal class HomeFragment @Inject constructor(
         )
     }
 
-    override fun createViewModel(): HomeViewModel = viewModelFactory.create()
+    override fun createViewModel(): HomeViewModel = viewModelFactory.create(extractScreenParams())
 
     override fun onApplyInsets(insets: WindowInsetsCompat): WindowInsetsCompat {
+        val barsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        binding.homeCategoriesWidget.updateLayoutParams<MarginLayoutParams> {
+            updateMargins(top = barsInsets.top / 2)
+        }
         return insets
     }
 
@@ -56,7 +66,22 @@ internal class HomeFragment @Inject constructor(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): HomeFragmentBinding {
-        return HomeFragmentBinding.inflate(inflater, container, false)
+        return HomeFragmentBinding.inflate(inflater, container, false).apply {
+            val params = homeTopPanel.layoutParams as CoordinatorLayout.LayoutParams
+            topPanelBehavior = params.behavior as TopPanelBehaviour
+
+            bottomSheetBehavior = BottomSheetBehavior.from(homeBottomSheet).apply {
+                state = BottomSheetBehavior.STATE_HALF_EXPANDED
+                halfExpandedRatio = SHEET_HALF_RATIO
+
+                isFitToContents = false
+                isHideable = false
+            }.apply {
+                bottomSheetCallback = HomeBottomSheetCallback(this).also {
+                    bottomSheetCallback = it
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,9 +90,7 @@ internal class HomeFragment @Inject constructor(
         }
         super.onViewCreated(view, savedInstanceState)
 
-        setupTopPanelBehaviour()
         setupCategoriesListener()
-        setupBottomSheetBehaviour()
         setupButtonsListeners()
         binding.homeBottomSheet.setListeners(
             onRemoveMarkers = viewModel::removeMarkers,
@@ -82,6 +105,10 @@ internal class HomeFragment @Inject constructor(
 
         binding.homeBottomSheet.render(viewState.sheetContentState)
         renderPoisButton(viewState)
+        renderPreviewMode(viewState)
+        renderButtons(viewState)
+
+        previousState = viewState
     }
 
     override fun onResume() {
@@ -106,25 +133,6 @@ internal class HomeFragment @Inject constructor(
     override fun onDetach() {
         super.onDetach()
         cicerone.router.exit()
-    }
-
-    private fun setupBottomSheetBehaviour() {
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet).apply {
-            state = BottomSheetBehavior.STATE_HALF_EXPANDED
-            halfExpandedRatio = SHEET_HALF_RATIO
-
-            isFitToContents = false
-            isHideable = false
-        }.apply {
-            bottomSheetCallback = HomeBottomSheetCallback(this).also {
-                bottomSheetCallback = it
-            }
-        }
-    }
-
-    private fun setupTopPanelBehaviour() {
-        val params = binding.homeTopPanel.layoutParams as CoordinatorLayout.LayoutParams
-        topPanelBehavior = params.behavior as TopPanelBehaviour
     }
 
     private fun setupButtonsListeners() {
@@ -190,6 +198,20 @@ internal class HomeFragment @Inject constructor(
 
     private fun removeCategoriesListener() {
         binding.homeCategoriesWidget.setStateListener {}
+    }
+
+    private fun renderButtons(viewState: HomeViewState) {
+        val needShow = !viewState.walkingModeEnabled && !viewState.isPreviewMode
+        binding.homeMarkerButton.isVisible = needShow
+        binding.homeBuildRouteButton.isVisible = needShow
+    }
+
+    private fun renderPreviewMode(viewState: HomeViewState) {
+        if (previousState?.isPreviewMode == viewState.isPreviewMode) return
+        viewModel.toggleMapState(willInteraction = viewState.isPreviewMode)
+        topPanelBehavior?.togglePanelState(binding.homeTopPanel, !viewState.isPreviewMode)
+        binding.homeBuildRouteButton.isVisible = !viewState.isPreviewMode
+        binding.homeMarkerButton.isVisible = !viewState.isPreviewMode
     }
 
     override fun consumeSideEffect(effect: SideEffect) = when (effect) {

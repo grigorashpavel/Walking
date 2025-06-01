@@ -21,7 +21,7 @@ fun <T : ScreenArguments> Fragment.extractScreenParams(): T {
 fun Fragment.addScreenArgs(screenArgs: ScreenArguments?) {
     if (screenArgs != null) {
         arguments = (arguments ?: Bundle()).apply {
-            putParcelable(this::class.java.name, screenArgs)
+            putParcelable(this@addScreenArgs::class.java.name, screenArgs)
         }
     }
 }

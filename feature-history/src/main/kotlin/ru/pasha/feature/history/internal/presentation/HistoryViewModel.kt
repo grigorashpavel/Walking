@@ -97,7 +97,10 @@ internal class HistoryViewModel @AssistedInject constructor(
         downloadJob?.cancel()
         downloadJob = viewModelScope.launch {
             val route = withTimeoutOrNull(TIMEOUT) {
-                repository.getRoute(previewEntity.id).getOrNull()?.route
+                val badRoute = repository.getRoute(previewEntity.id).getOrNull()?.route
+                badRoute?.copy(
+                    path = badRoute.path.map { it.copy(it.lon, it.lat) }
+                ) ?: badRoute
             }
             if (route != null) {
                 repository.saveRoute(route)

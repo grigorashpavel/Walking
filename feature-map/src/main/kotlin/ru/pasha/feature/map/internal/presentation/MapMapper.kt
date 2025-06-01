@@ -8,7 +8,7 @@ internal class MapMapper : BaseMapper<MapState, MapViewState>() {
 
     override fun toViewState(state: MapState): MapViewState {
         return MapViewState(
-            isCenteredMarkerVisible = state.centerMarkerVisibility,
+            isCenteredMarkerVisible = state.centerMarkerVisibility && !state.previewModeEnabled,
             zoom = state.zoom,
             location = state.center.point(),
             markersToDraw = state.createdMarkers,

@@ -10,4 +10,5 @@ internal data class HomeViewState(
     val addMarkerEnabled: Boolean,
     val walkingModeEnabled: Boolean,
     val isWalkingButtonVisible: Boolean,
+    val isPreviewMode: Boolean,
 )

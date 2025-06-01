@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.parcelize.Parcelize
 import ru.pasha.common.Text
 import ru.pasha.common.map.Marker
+import ru.pasha.common.map.Route
 import ru.pasha.feature.home.databinding.HomeBottomSheetViewBinding
 import ru.pasha.feature.home.internal.presentation.MarkersAdapter
 import ru.pasha.feature.home.internal.presentation.PreviewMarkersAdapter
@@ -71,25 +72,25 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         binding.progressBar.isIndeterminate = state.isLoading
 
         val hasMarker = state.markers.isNotEmpty()
+        val hasRoute = state.route != null
 
-        binding.homeMarkersPreviewRecyclerView.isVisible = hasMarker
-        binding.homeMarkersRecyclerView.isVisible = hasMarker
+        binding.homeMarkersPreviewRecyclerView.isVisible = hasMarker && !hasRoute
+        binding.homeMarkersRecyclerView.isVisible = hasMarker && !hasRoute
 
-        binding.homeRemoveMarkersButton.isVisible = hasMarker
+        binding.homeRemoveMarkersButton.isVisible = hasMarker && !hasRoute
 
         horizontalAdapter?.updateItems(state.markers, forceUpdate = false)
         verticalAdapter?.updateItems(state.markers, forceUpdate = true)
 
         binding.homeRouteTimerText.isVisible = state.inRouteTime != null
 
-        if (state.routeLength == null) {
-            binding.homeRouteLengthTitle.setText("")
-            binding.homeRouteLengthTitle.isVisible = false
-        } else {
+        if (state.route != null) {
             binding.homeRouteLengthTitle.setText(
-                "Длинна маршрута: ${state.routeLength} м."
+                "Длинна маршрута: ${String.format("%.2f", state.route.length)} м."
             )
-            binding.homeRouteLengthTitle.isVisible = true
+        } else {
+            binding.homeRouteLengthTitle.isVisible = false
+            binding.homeRouteLengthTitle.setText("")
         }
 
         binding.homeMenuHistoryItem.isVisible = state.isMenuVisible
@@ -124,8 +125,8 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         val markers: List<Marker>,
         val isLoading: Boolean,
         val isMenuVisible: Boolean,
+        val route: Route?,
         val inRouteTime: Text?,
-        val routeLength: Double?,
     )
 
     @Parcelize

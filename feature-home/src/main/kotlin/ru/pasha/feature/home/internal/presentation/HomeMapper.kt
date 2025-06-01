@@ -16,11 +16,12 @@ internal class HomeMapper(
                 isLoading = state.isLoading,
                 isMenuVisible = !state.interactionModeEnabled,
                 inRouteTime = null,
-                routeLength = state.route?.length
+                route = state.route,
             ),
             addMarkerEnabled = !reachedMaxMarkers(),
             walkingModeEnabled = state.walkingModeEnabled,
             isWalkingButtonVisible = state.route != null,
+            isPreviewMode = state.previewModeEnabled,
         )
     }
 

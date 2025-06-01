@@ -57,6 +57,10 @@ internal class MapControllerProvider @Inject constructor(
         update { copy(walkingModeEnabled = enabled) }
     }
 
+    override fun setPreviewMode(enabled: Boolean) {
+        update { copy(previewModeEnabled = enabled) }
+    }
+
     override val markers: Flow<List<Marker>> = controllerFlow
         .distinctUntilChangedBy { it.createdMarkers }
         .map { it.createdMarkers }
@@ -90,6 +94,10 @@ internal class MapControllerProvider @Inject constructor(
 
     override fun accessLocation() {
         locationCallback()
+    }
+
+    override fun setRoute(route: Route) {
+        update { copy(route = route) }
     }
 
     override suspend fun buildRoute(name: String?): Text? {
@@ -132,6 +140,7 @@ internal class MapControllerProvider @Inject constructor(
             createdMarkers = listOf(),
             route = null,
             walkingModeEnabled = false,
+            previewModeEnabled = false,
         )
     }
 

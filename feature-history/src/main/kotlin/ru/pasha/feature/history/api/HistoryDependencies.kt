@@ -15,6 +15,6 @@ interface HistoryDependencies {
 }
 
 interface NavigationProvider {
-    fun navigateToPreview (route: Route)
+    fun navigateToPreview(route: Route)
     fun navigateBack()
 }

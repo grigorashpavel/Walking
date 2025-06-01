@@ -81,12 +81,12 @@ class CategoriesWidgetView @JvmOverloads constructor(
             binding.homeCategoriesTabWidget,
             binding.homeCategoryPager,
             false
-        ) { tab, _ ->
-//            tab.text = when (binding.homeCategoryPager.adapter?.getItemViewType(tab.position)) {
-//                R.layout.tab_user_categories -> "Ваши настройки"
-//                R.layout.tab_default_category -> "Стандартный"
-//                else -> ""
-//            }
+        ) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Ваши настройки"
+                1 -> "Стандартный"
+                else -> ""
+            }
         }.attach()
         binding.homeCategoriesTabWidget.addOnTabSelectedListener(tabListener)
     }

@@ -11,7 +11,6 @@ internal class StartButtonBehaviour(
     context: Context,
     attrs: AttributeSet? = null
 ) : CoordinatorLayout.Behavior<AppCompatButton>(context, attrs) {
-    private var initialPanelHeight = 0f
 
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
@@ -24,12 +23,8 @@ internal class StartButtonBehaviour(
         child: AppCompatButton,
         dependency: View
     ): Boolean {
-        if (initialPanelHeight == 0f) {
-            initialPanelHeight = dependency.height.toFloat()
-        }
-
         val childHalf = child.height / 2
-        val progress = 1f - dependency.bottom / initialPanelHeight
+        val progress = 1f - dependency.bottom / dependency.height.toFloat()
 
         child.y = dependency.bottom - childHalf * (1 + progress)
         child.visibility = if (progress >= 1f) View.GONE else View.VISIBLE

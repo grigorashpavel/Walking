@@ -3,6 +3,7 @@ package ru.pasha.feature.home.internal.view
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -23,6 +24,8 @@ internal class TopPanelBehaviour(
 
     private var initialHeight: Int? = null
 
+    private var showing: Boolean? = null
+
     override fun layoutDependsOn(
         parent: CoordinatorLayout,
         child: TopPanelView,
@@ -38,10 +41,12 @@ internal class TopPanelBehaviour(
     ): Boolean {
         if (initialHeight == null) {
             val newHeight = dependency.top + bottomSheetOverlap.toInt()
-            child.layoutParams.height = newHeight.coerceAtLeast(0)
-            child.requestLayout()
-
             initialHeight = newHeight
+
+            if (showing == true) {
+                child.layoutParams.height = newHeight.coerceAtLeast(0)
+                child.requestLayout()
+            }
         }
         return true
     }
@@ -55,11 +60,18 @@ internal class TopPanelBehaviour(
 
     fun togglePanelState(panel: TopPanelView, show: Boolean) {
         if (inAnimation) return
+        showing = show
 
-        val targetValue = if (show) initialHeight!! else 0f
+        if (initialHeight == null) {
+            panel.layoutParams.height = 0
+            panel.requestLayout()
+            return
+        }
+
+        val targetValue = if (show) initialHeight else 0f
 
         inAnimation = true
-        stateChangeAnimator = ValueAnimator.ofFloat(panel.height.toFloat(), targetValue.toFloat()).apply {
+        stateChangeAnimator = ValueAnimator.ofFloat(panel.height.toFloat(), targetValue!!.toFloat()).apply {
             doOnEnd { inAnimation = false }
             addUpdateListener {
                 val newValue = it.animatedValue as Float

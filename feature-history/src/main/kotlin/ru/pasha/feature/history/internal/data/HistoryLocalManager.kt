@@ -45,7 +45,7 @@ internal class HistoryLocalManager @Inject constructor(
 
     suspend fun loadDataFromFile(fileName: String): Result<Route> = withContext(Dispatchers.IO) {
         try {
-            val file = File(context.filesDir, fileName)
+            val file = File(context.filesDir, "$fileName.json")
             if (!file.exists()) throw FileNotFoundException("File $fileName not found")
 
             val jsonString = file.readText()

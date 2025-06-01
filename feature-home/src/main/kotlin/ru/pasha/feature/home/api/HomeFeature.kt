@@ -11,4 +11,4 @@ interface HomeFeature : FragmentInstantiator {
 }
 
 @Parcelize
-data class HomeArguments(val route: Route?): ScreenArguments
+data class HomeArguments(val route: Route?) : ScreenArguments

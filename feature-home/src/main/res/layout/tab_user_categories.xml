@@ -22,6 +22,7 @@
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/natureRadio"
+                android:clickable="false"
                 android:layout_width="@dimen/walking_app_home_radio_size"
                 android:layout_height="@dimen/walking_app_home_radio_size"
                 app:layout_constraintStart_toStartOf="parent"
@@ -73,6 +74,7 @@
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/residentialRadio"
                 android:layout_width="@dimen/walking_app_home_radio_size"
+                android:clickable="false"
                 android:layout_height="@dimen/walking_app_home_radio_size"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -121,6 +123,7 @@
 
             <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/roadsRadio"
+                android:clickable="false"
                 android:layout_width="@dimen/walking_app_home_radio_size"
                 android:layout_height="@dimen/walking_app_home_radio_size"
                 app:layout_constraintStart_toStartOf="parent"
