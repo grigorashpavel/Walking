@@ -43,10 +43,10 @@ internal class TopPanelBehaviour(
             val newHeight = dependency.top + bottomSheetOverlap.toInt()
             initialHeight = newHeight
 
-            if (showing == true) {
+//            if (showing == true) {
                 child.layoutParams.height = newHeight.coerceAtLeast(0)
                 child.requestLayout()
-            }
+//            }
         }
         return true
     }

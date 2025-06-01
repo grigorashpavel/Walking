@@ -74,20 +74,21 @@ internal class HomeFragment @Inject constructor(
         container: ViewGroup?
     ): HomeFragmentBinding {
         return HomeFragmentBinding.inflate(inflater, container, false).apply {
-            val params = homeTopPanel.layoutParams as CoordinatorLayout.LayoutParams
-            topPanelBehavior = params.behavior as TopPanelBehaviour
-
             bottomSheetBehavior = BottomSheetBehavior.from(homeBottomSheet).apply {
                 state = BottomSheetBehavior.STATE_HALF_EXPANDED
                 halfExpandedRatio = SHEET_HALF_RATIO
 
                 isFitToContents = false
                 isHideable = false
+                isDraggable = false
             }.apply {
                 bottomSheetCallback = HomeBottomSheetCallback(this).also {
                     bottomSheetCallback = it
                 }
             }
+
+            val params = homeTopPanel.layoutParams as CoordinatorLayout.LayoutParams
+            topPanelBehavior = params.behavior as TopPanelBehaviour
         }
     }
 
@@ -210,6 +211,7 @@ internal class HomeFragment @Inject constructor(
                     doOnEnd {
                         binding.homeShimmerLayout.root.stopShimmer()
                         binding.homeShimmerLayout.root.isVisible = false
+                        binding.root.removeView(binding.homeShimmerLayout.root)
                     }
                 }
         }
@@ -232,7 +234,13 @@ internal class HomeFragment @Inject constructor(
     private fun renderPreviewMode(viewState: HomeViewState) {
         if (previousState?.isPreviewMode == viewState.isPreviewMode) return
         viewModel.toggleMapState(willInteraction = viewState.isPreviewMode)
-        topPanelBehavior?.togglePanelState(binding.homeTopPanel, !viewState.isPreviewMode)
+        safePost {
+            topPanelBehavior?.togglePanelState(binding.homeTopPanel, !viewState.isPreviewMode)
+            if (viewState.isPreviewMode) {
+                bottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+                bottomSheetBehavior?.isDraggable = true
+            }
+        }
         binding.homeBuildRouteButton.isVisible = !viewState.isPreviewMode
         binding.homeMarkerButton.isVisible = !viewState.isPreviewMode
     }
@@ -272,6 +280,6 @@ internal class HomeFragment @Inject constructor(
         const val ACTIVE_ALPHA = 1f
         const val INACTIVE_ALPHA = 0.5f
 
-        const val SHIMMER_HIDING_DURATION = 1500L
+        const val SHIMMER_HIDING_DURATION = 1000L
     }
 }
