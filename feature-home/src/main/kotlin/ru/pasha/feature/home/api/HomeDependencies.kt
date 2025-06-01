@@ -4,4 +4,9 @@ import ru.pasha.common.di.WalkingMapProvider
 
 interface HomeDependencies {
     val mapProvider: WalkingMapProvider
+    val homeNavigationProvider: HomeNavigationProvider
+}
+
+interface HomeNavigationProvider {
+    fun navigateToHistory()
 }

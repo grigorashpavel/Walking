@@ -4,13 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetRouteV1Request(
+internal data class GetRouteV1Request(
     @SerialName("id")
     val id: String,
 )
 
 @Serializable
-data class GetRouteSuccessData(
+internal data class GetRouteSuccessData(
     @SerialName("route")
     val route: Route,
 
@@ -19,7 +19,7 @@ data class GetRouteSuccessData(
 )
 
 @Serializable
-data class Route(
+internal data class Route(
     @SerialName("id")
     val id: String,
     @SerialName("name")
@@ -31,7 +31,7 @@ data class Route(
 )
 
 @Serializable
-data class PreviewRoute(
+internal data class PreviewRoute(
     @SerialName("id")
     val id: String,
     @SerialName("name")
@@ -39,7 +39,7 @@ data class PreviewRoute(
 )
 
 @Serializable
-data class Point(
+internal data class Point(
     @SerialName("lat")
     val lat: Float,
 
@@ -48,7 +48,7 @@ data class Point(
 )
 
 @Serializable
-data class GetRoutesSuccessData(
+internal data class GetRoutesSuccessData(
     @SerialName("routes")
     val routes: List<PreviewRoute>,
 

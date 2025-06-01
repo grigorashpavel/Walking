@@ -14,7 +14,7 @@ import ru.pasha.common.pattern.SideEffect
 import ru.pasha.feature.history.databinding.HistoryFragmentBinding
 import javax.inject.Inject
 
-class HistoryFragment @Inject constructor(
+internal class HistoryFragment @Inject constructor(
     private val viewModelFactory: HistoryViewModel.Factory,
 ) : BaseFragment<HistoryViewState, HistoryViewModel, HistoryFragmentBinding>(
     viewModelClass = HistoryViewModel::class.java,
@@ -32,6 +32,9 @@ class HistoryFragment @Inject constructor(
             errorRefreshButton.setOnClickListener {
                 viewModel.loadRoutes()
             }
+            backButton.setOnClickListener {
+                viewModel.navigateBack()
+            }
         }
     }
 
@@ -40,6 +43,7 @@ class HistoryFragment @Inject constructor(
         binding.historyRecyclerView.adapter = HistoryAdapter(
             downloadCallback = viewModel::downloadRoute,
             removeLocalCallback = viewModel::removeRoute,
+            openCallback = viewModel::navigateToPreview,
         ).also { historyAdapter = it }
         binding.historyRecyclerView.layoutManager = LinearLayoutManager(requireContext()).apply {
             orientation = LinearLayoutManager.VERTICAL

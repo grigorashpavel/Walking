@@ -12,12 +12,14 @@ import kotlinx.coroutines.withTimeoutOrNull
 import ru.pasha.common.Text
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.feature.history.api.NavigationProvider
 import ru.pasha.feature.history.internal.data.HistoryRepository
 import ru.pasha.feature.history.internal.data.entity
 import ru.pasha.feature.history.internal.domain.PreviewEntity
 
-class HistoryViewModel @AssistedInject constructor(
+internal class HistoryViewModel @AssistedInject constructor(
     private val repository: HistoryRepository,
+    private val navigationProvider: NavigationProvider,
 ) : BaseViewModel<HistoryState, HistoryViewState>(
     mapper = HistoryMapper(),
     initialState = HistoryState.Loading
@@ -25,6 +27,7 @@ class HistoryViewModel @AssistedInject constructor(
     private var loadJob: Job? = null
     private var downloadJob: Job? = null
     private var removeJob: Job? = null
+    private var navigationJob: Job? = null
 
     init {
         loadRoutes()
@@ -123,6 +126,23 @@ class HistoryViewModel @AssistedInject constructor(
                 }
             } else {
                 loadRoutes()
+            }
+        }
+    }
+
+    fun navigateBack() = navigationProvider.navigateBack()
+
+    fun navigateToPreview(route: PreviewEntity) {
+        navigationJob?.cancel()
+        navigationJob = viewModelScope.launch {
+            val target = repository.getSavedRoute(route)
+                ?: repository.getRoute(route.id).getOrNull()?.route?.entity()
+            if (target != null) {
+                navigationProvider.navigateToPreview(target)
+            } else {
+                sideEffect {
+                    DownloadError(Text.Constant("Не удалось открыть маршрут"))
+                }
             }
         }
     }

@@ -12,10 +12,12 @@ import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.Marker
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.feature.home.api.HomeNavigationProvider
 import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 
 internal class HomeViewModel @AssistedInject constructor(
     private val walkingMapProvider: WalkingMapProvider,
+    private val navigationProvider: HomeNavigationProvider,
 ) : BaseViewModel<HomeState, HomeViewState>(
     mapper = HomeMapper(walkingMapProvider.mapController::isReachedMaxMarkers),
     initialState = HomeState(
@@ -52,6 +54,10 @@ internal class HomeViewModel @AssistedInject constructor(
                 updateState { copy(route = route) }
             }
             .launchIn(viewModelScope)
+    }
+
+    fun navigateToHistory() {
+        navigationProvider.navigateToHistory()
     }
 
     fun toggleWalkingMode() {

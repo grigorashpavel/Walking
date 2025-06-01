@@ -7,10 +7,10 @@ import ru.pasha.common.map.Route
 import ru.pasha.feature.history.internal.data.PreviewRoute
 import java.util.UUID
 
-data class GetRouteEntity(val route: Route, val message: Text)
-data class GetRoutesEntity(val routes: List<PreviewRoute>, val message: Text)
+internal data class GetRouteEntity(val route: Route, val message: Text)
+internal data class GetRoutesEntity(val routes: List<PreviewRoute>, val message: Text)
 
-data class PreviewEntity(val id: UUID, val name: String, val downloaded: Boolean) {
+internal data class PreviewEntity(val id: UUID, val name: String, val downloaded: Boolean) {
     override fun equals(other: Any?): Boolean =
         (other as? PreviewEntity)?.id?.let { it == id } ?: false
 

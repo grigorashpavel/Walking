@@ -9,7 +9,7 @@ import retrofit2.http.Query
 import ru.pasha.network.api.ResponseWithStatus
 import java.util.UUID
 
-interface HistoryApi {
+internal interface HistoryApi {
     @GET("v1/history/get-routes")
     suspend fun getRoutes(
         @Header("X-Idempotency-Key") idempotencyKey: UUID,

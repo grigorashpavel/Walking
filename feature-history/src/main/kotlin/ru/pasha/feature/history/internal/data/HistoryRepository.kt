@@ -4,12 +4,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.pasha.common.map.Route
 import ru.pasha.feature.history.internal.di.HistoryScope
+import ru.pasha.feature.history.internal.domain.PreviewEntity
 import ru.pasha.network.api.handleApiResponse
 import java.util.UUID
 import javax.inject.Inject
 
 @HistoryScope
-class HistoryRepository @Inject constructor(
+internal class HistoryRepository @Inject constructor(
     private val historyApi: HistoryApi,
     private val historyLocalManager: HistoryLocalManager,
 ) {
@@ -37,6 +38,9 @@ class HistoryRepository @Inject constructor(
 
     suspend fun getSavedPreviewRoutes(): List<Route>? =
         historyLocalManager.getSavedRoutes()?.map { it.entity() }
+
+    suspend fun getSavedRoute(previewEntity: PreviewEntity): Route? =
+        historyLocalManager.loadDataFromFile(previewEntity.name).getOrNull()?.entity()
 
     suspend fun saveRoute(route: ru.pasha.feature.history.internal.data.Route) =
         historyLocalManager.saveRouteToFile(data = route)

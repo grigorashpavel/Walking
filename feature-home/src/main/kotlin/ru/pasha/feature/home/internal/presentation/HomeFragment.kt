@@ -69,17 +69,18 @@ internal class HomeFragment @Inject constructor(
         setupCategoriesListener()
         setupBottomSheetBehaviour()
         setupButtonsListeners()
+        binding.homeBottomSheet.setListeners(
+            onRemoveMarkers = viewModel::removeMarkers,
+            onRemoveMarker = viewModel::removeMarker,
+            navigateToHistory = viewModel::navigateToHistory,
+        )
     }
 
     override fun render(viewState: HomeViewState) {
         binding.homeCategoriesWidget.setState(viewState.categoryState)
         binding.homeMarkerButton.isVisible = viewState.markerButtonVisible
 
-        binding.homeBottomSheet.render(
-            viewState.sheetContentState,
-            onRemoveMarkers = viewModel::removeMarkers,
-            onRemoveMarker = viewModel::removeMarker,
-        )
+        binding.homeBottomSheet.render(viewState.sheetContentState)
         renderPoisButton(viewState)
     }
 

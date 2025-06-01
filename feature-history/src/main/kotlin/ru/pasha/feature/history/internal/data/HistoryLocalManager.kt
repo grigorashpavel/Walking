@@ -11,7 +11,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import javax.inject.Inject
 
-class HistoryLocalManager @Inject constructor(
+internal class HistoryLocalManager @Inject constructor(
     private val context: Context
 ) {
     private val jsonFormat = Json {

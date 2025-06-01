@@ -4,7 +4,7 @@ import ru.pasha.common.Text
 import ru.pasha.common.pattern.BaseMapper
 import ru.pasha.feature.history.internal.domain.PreviewEntity
 
-class HistoryMapper : BaseMapper<HistoryState, HistoryViewState>() {
+internal class HistoryMapper : BaseMapper<HistoryState, HistoryViewState>() {
     override fun toViewState(state: HistoryState): HistoryViewState {
         return HistoryViewState(
             routes = state.getRoutes(),

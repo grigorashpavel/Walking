@@ -5,7 +5,7 @@ package ru.pasha.feature.history.internal.presentation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class PaginationScrollListener(
+internal abstract class PaginationScrollListener(
     private val layoutManager: LinearLayoutManager
 ) : RecyclerView.OnScrollListener() {
 

@@ -6,9 +6,10 @@ import ru.pasha.feature.history.R
 import ru.pasha.feature.history.databinding.HistoryItemBinding
 import ru.pasha.feature.history.internal.domain.PreviewEntity
 
-class HistoryAdapter(
+internal class HistoryAdapter(
     private val downloadCallback: (PreviewEntity) -> Unit,
     private val removeLocalCallback: (PreviewEntity) -> Unit,
+    private val openCallback: (PreviewEntity) -> Unit,
 ) : BaseRecyclerAdapter<HistoryItemBinding, PreviewEntity>(
     inflateBinding = { inflater, parent, attach ->
         HistoryItemBinding.inflate(inflater, parent, attach)
@@ -18,6 +19,7 @@ class HistoryAdapter(
         binding.routeName.text = item.name
 
         setOnItemClickListener {
+            openCallback(item)
         }
 
         binding.progressBar.isVisible = false

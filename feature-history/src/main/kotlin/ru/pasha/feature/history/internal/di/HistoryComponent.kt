@@ -6,7 +6,7 @@ import ru.pasha.feature.history.api.HistoryFeature
 
 @Component(dependencies = [HistoryDependencies::class], modules = [HistoryModule::class])
 @HistoryScope
-interface HistoryComponent {
+internal interface HistoryComponent {
     val feature: HistoryFeature
 
     companion object {

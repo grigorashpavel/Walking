@@ -32,6 +32,8 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
     private var removeAllCallback: () -> Unit = {}
     private var removeMarkerCallback: (Marker) -> Unit = {}
 
+    private var navigateToHistory: () -> Unit = {}
+
     init {
         binding.homeMarkersPreviewRecyclerView.adapter =
             PreviewMarkersAdapter().also { horizontalAdapter = it }
@@ -49,15 +51,23 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         }
 
         binding.homeMenuHistoryItem.setOnClickListener {
+            navigateToHistory()
         }
         binding.homeMenuSettingsItem.setOnClickListener {
         }
     }
 
-    fun render(state: State, onRemoveMarkers: () -> Unit, onRemoveMarker: (Marker) -> Unit) {
+    fun setListeners(
+        onRemoveMarkers: () -> Unit,
+        onRemoveMarker: (Marker) -> Unit,
+        navigateToHistory: () -> Unit,
+    ) {
         removeAllCallback = onRemoveMarkers
         removeMarkerCallback = onRemoveMarker
+        this.navigateToHistory = navigateToHistory
+    }
 
+    fun render(state: State) {
         binding.progressBar.isIndeterminate = state.isLoading
 
         val hasMarker = state.markers.isNotEmpty()
@@ -69,6 +79,8 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
 
         horizontalAdapter?.updateItems(state.markers, forceUpdate = false)
         verticalAdapter?.updateItems(state.markers, forceUpdate = true)
+
+        binding.homeRouteTimerText.isVisible = state.inRouteTime != null
 
         if (state.routeLength == null) {
             binding.homeRouteLengthTitle.setText("")
