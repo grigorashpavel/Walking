@@ -72,7 +72,7 @@ internal class HomeViewModel @AssistedInject constructor(
 
     fun toggleWalkingMode() {
         updateState {
-            if (!walkingModeEnabled) accessLocation()
+            switchLocation(!walkingModeEnabled)
             walkingMapProvider.mapController.setWalkingMode(!walkingModeEnabled)
             copy(walkingModeEnabled = !walkingModeEnabled)
         }
@@ -114,8 +114,8 @@ internal class HomeViewModel @AssistedInject constructor(
         }
     }
 
-    fun accessLocation() {
-        walkingMapProvider.mapController.accessLocation()
+    fun switchLocation(enabled: Boolean) {
+        walkingMapProvider.mapController.switchLocationListen(enabled = enabled)
     }
 
     fun toggleInteractionMode(target: Boolean) {
@@ -125,6 +125,10 @@ internal class HomeViewModel @AssistedInject constructor(
             walkingMapProvider.mapController.setPreviewMode(false)
             updateState { copy(interactionModeEnabled = false, previewModeEnabled = false) }
         }
+    }
+
+    fun setWalkingMode(target: Boolean) {
+        updateState { copy(walkingModeEnabled = target) }
     }
 
     fun toggleMapState(willInteraction: Boolean) {

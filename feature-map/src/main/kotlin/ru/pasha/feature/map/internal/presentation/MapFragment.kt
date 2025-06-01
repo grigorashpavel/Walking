@@ -115,12 +115,16 @@ internal class MapFragment @Inject constructor(
 
         is MapSideEffect.StartListenLocation -> {
             setupLocationOverlay()
+            enableLocation()
         }
+
+        is MapSideEffect.StopListenLocation -> disableLication()
 
         else -> Unit
     }
 
     private fun setupLocationOverlay() {
+        if (locationOverlay != null) return
         val location = MyLocationNewOverlay(
             object : GpsMyLocationProvider(requireContext()) {
                 override fun onLocationChanged(location: Location) {
@@ -135,8 +139,7 @@ internal class MapFragment @Inject constructor(
             },
             binding.walkingMap,
         ).apply {
-            enableMyLocation()
-            enableFollowLocation()
+            isDrawAccuracyEnabled = false
             setPersonAnchor(0.5f, 0.895f)
             runOnFirstFix {
                 activity?.runOnUiThread {
@@ -144,8 +147,28 @@ internal class MapFragment @Inject constructor(
                 }
             }
         }
-        binding.walkingMap.overlays.add(location)
         locationOverlay = location
+    }
+
+    private fun enableLocation() {
+        locationOverlay?.let {
+            if (!binding.walkingMap.overlays.contains(it)) {
+                locationOverlay?.let(binding.walkingMap.overlays::add)
+                locationOverlay?.isEnabled = true
+            }
+
+            locationOverlay?.enableMyLocation()
+            locationOverlay?.enableFollowLocation()
+            binding.walkingMap.invalidate()
+        }
+    }
+
+    private fun disableLication() {
+        locationOverlay?.disableFollowLocation()
+        locationOverlay?.disableMyLocation()
+        locationOverlay?.let(binding.walkingMap.overlays::remove)
+        locationOverlay?.isEnabled = false
+        binding.walkingMap.invalidate()
     }
 
     override fun onResume() {

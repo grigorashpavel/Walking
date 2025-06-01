@@ -101,4 +101,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_behavior="ru.pasha.feature.home.internal.view.StartButtonBehaviour" />
 
+    <include
+        android:id="@+id/homeShimmerLayout"
+        layout="@layout/home_shimmer" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -27,10 +27,13 @@ internal class MapViewModel @AssistedInject constructor(
             .onEach { updateState { it } }
             .launchIn(viewModelScope)
 
-        mapControllerProvider.locationCallback = ::checkLocationPermissions
+        mapControllerProvider.locationCallback = { enable ->
+            if (enable) checkLocationPermissions()
+            else stopLocationTracking()
+        }
     }
 
-    fun checkLocationPermissions() {
+    private fun checkLocationPermissions() {
         if (!permissionManager.hasLocationPermission()) {
             sideEffect {
                 MapSideEffect.RequestLocationPermission
@@ -42,6 +45,10 @@ internal class MapViewModel @AssistedInject constructor(
 
     private fun startLocationTracking() {
         sideEffect { MapSideEffect.StartListenLocation }
+    }
+
+    private fun stopLocationTracking() {
+        sideEffect { MapSideEffect.StopListenLocation }
     }
 
     fun handlePermissionResult(granted: Boolean) {
@@ -59,4 +66,5 @@ internal class MapViewModel @AssistedInject constructor(
 sealed class MapSideEffect : SideEffect {
     data object RequestLocationPermission : MapSideEffect()
     data object StartListenLocation : MapSideEffect()
+    data object StopListenLocation : MapSideEffect()
 }

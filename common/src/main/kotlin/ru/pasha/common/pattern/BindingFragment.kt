@@ -94,6 +94,12 @@ abstract class BindingFragment<VB : ViewBinding> : NavigationProvider, Fragment(
         }
     }
 
+    protected fun safePost(action: () -> Unit) {
+        if (!isFragmentViewDestroyed) {
+            this.binding.root.post { action() }
+        }
+    }
+
     private inner class SafeAnimatorListener : AnimatorListenerAdapter() {
         override fun onAnimationStart(animation: Animator) {
             if (isFragmentViewDestroyed) {

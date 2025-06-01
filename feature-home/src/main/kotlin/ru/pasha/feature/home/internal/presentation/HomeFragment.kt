@@ -1,15 +1,18 @@
 package ru.pasha.feature.home.internal.presentation
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.animation.doOnEnd
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
+import androidx.core.view.updatePadding
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
@@ -59,6 +62,10 @@ internal class HomeFragment @Inject constructor(
         binding.homeCategoriesWidget.updateLayoutParams<MarginLayoutParams> {
             updateMargins(top = barsInsets.top / 2)
         }
+
+        binding.homeShimmerLayout.root.updatePadding(
+            top = barsInsets.top / 2
+        )
         return insets
     }
 
@@ -90,6 +97,7 @@ internal class HomeFragment @Inject constructor(
         }
         super.onViewCreated(view, savedInstanceState)
 
+        renderShimmer()
         setupCategoriesListener()
         setupButtonsListeners()
         binding.homeBottomSheet.setListeners(
@@ -149,7 +157,7 @@ internal class HomeFragment @Inject constructor(
             viewModel.buildRoute()
         }
         binding.homeLocationButton.setOnClickListener {
-            viewModel.accessLocation()
+            viewModel.switchLocation(enabled = true)
         }
         binding.homeWalkingButton.setOnClickListener {
             viewModel.toggleWalkingMode()
@@ -175,7 +183,9 @@ internal class HomeFragment @Inject constructor(
         bottomSheetBehavior?.isDraggable = false
 
         viewModel.toggleMapState(willInteraction = false)
+        viewModel.setWalkingMode(false)
         viewModel.toggleInteractionMode(false)
+        viewModel.switchLocation(enabled = false)
     }
 
     private fun renderPoisButton(viewState: HomeViewState) {
@@ -190,6 +200,19 @@ internal class HomeFragment @Inject constructor(
         binding.homeWalkingButton.setImageResource(
             if (viewState.walkingModeEnabled) R.drawable.ic_stop_24 else R.drawable.ic_start_24
         )
+    }
+
+    private fun renderShimmer() {
+        binding.homeShimmerLayout.root.safeAnimate {
+            ObjectAnimator
+                .ofFloat(binding.homeShimmerLayout.root, View.ALPHA, 1f, 0f).apply {
+                    duration = SHIMMER_HIDING_DURATION
+                    doOnEnd {
+                        binding.homeShimmerLayout.root.stopShimmer()
+                        binding.homeShimmerLayout.root.isVisible = false
+                    }
+                }
+        }
     }
 
     private fun setupCategoriesListener() {
@@ -248,5 +271,7 @@ internal class HomeFragment @Inject constructor(
 
         const val ACTIVE_ALPHA = 1f
         const val INACTIVE_ALPHA = 0.5f
+
+        const val SHIMMER_HIDING_DURATION = 1500L
     }
 }

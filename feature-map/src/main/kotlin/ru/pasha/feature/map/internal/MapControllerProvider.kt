@@ -25,7 +25,7 @@ internal class MapControllerProvider @Inject constructor(
 ) : MapController {
     val controllerFlow = MutableStateFlow(createDefaultState())
 
-    var locationCallback: () -> Unit = {}
+    var locationCallback: (Boolean) -> Unit = {}
 
     var userLocation: GeoPoint? = null
 
@@ -92,8 +92,8 @@ internal class MapControllerProvider @Inject constructor(
         update { copy(createdMarkers = emptyList()) }
     }
 
-    override fun accessLocation() {
-        locationCallback()
+    override fun switchLocationListen(enabled: Boolean) {
+        locationCallback(enabled)
     }
 
     override fun setRoute(route: Route) {
