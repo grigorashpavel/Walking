@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.parcelize.Parcelize
+import ru.pasha.common.Text
 import ru.pasha.common.map.Marker
 import ru.pasha.feature.home.databinding.HomeBottomSheetViewBinding
 import ru.pasha.feature.home.internal.presentation.MarkersAdapter
@@ -46,6 +47,11 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         binding.homeRemoveMarkersButton.setOnClickListener {
             removeAllCallback()
         }
+
+        binding.homeMenuHistoryItem.setOnClickListener {
+        }
+        binding.homeMenuSettingsItem.setOnClickListener {
+        }
     }
 
     fun render(state: State, onRemoveMarkers: () -> Unit, onRemoveMarker: (Marker) -> Unit) {
@@ -61,8 +67,21 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
 
         binding.homeRemoveMarkersButton.isVisible = hasMarker
 
-        horizontalAdapter?.updateItems(state.markers)
-        verticalAdapter?.updateItems(state.markers)
+        horizontalAdapter?.updateItems(state.markers, forceUpdate = false)
+        verticalAdapter?.updateItems(state.markers, forceUpdate = true)
+
+        if (state.routeLength == null) {
+            binding.homeRouteLengthTitle.setText("")
+            binding.homeRouteLengthTitle.isVisible = false
+        } else {
+            binding.homeRouteLengthTitle.setText(
+                "Длинна маршрута: ${state.routeLength} м."
+            )
+            binding.homeRouteLengthTitle.isVisible = true
+        }
+
+        binding.homeMenuHistoryItem.isVisible = state.isMenuVisible
+        binding.homeMenuSettingsItem.isVisible = state.isMenuVisible
     }
 
     override fun remove(marker: Marker) {
@@ -89,7 +108,13 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         super.onDetachedFromWindow()
     }
 
-    data class State(val markers: List<Marker>, val isLoading: Boolean)
+    data class State(
+        val markers: List<Marker>,
+        val isLoading: Boolean,
+        val isMenuVisible: Boolean,
+        val inRouteTime: Text?,
+        val routeLength: Double?,
+    )
 
     @Parcelize
     private data class ExpandedSavedState(

@@ -55,4 +55,5 @@ dependencies {
     implementation(projects.featureBanner)
     implementation(projects.featureMap)
     implementation(projects.featureHome)
+    implementation(projects.featureHistory)
 }

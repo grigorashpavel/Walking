@@ -12,10 +12,11 @@ import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
+import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.format
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
-import ru.pasha.feature.home.api.WalkingMapProvider
+import ru.pasha.feature.home.R
 import ru.pasha.feature.home.databinding.HomeFragmentBinding
 import ru.pasha.feature.home.internal.view.HomeBottomSheetCallback
 import ru.pasha.feature.home.internal.view.HomeBottomSheetView
@@ -75,7 +76,7 @@ internal class HomeFragment @Inject constructor(
         binding.homeMarkerButton.isVisible = viewState.markerButtonVisible
 
         binding.homeBottomSheet.render(
-            viewState.markers,
+            viewState.sheetContentState,
             onRemoveMarkers = viewModel::removeMarkers,
             onRemoveMarker = viewModel::removeMarker,
         )
@@ -141,6 +142,9 @@ internal class HomeFragment @Inject constructor(
         binding.homeLocationButton.setOnClickListener {
             viewModel.accessLocation()
         }
+        binding.homeWalkingButton.setOnClickListener {
+            viewModel.toggleWalkingMode()
+        }
     }
 
     private fun startMapInteraction() {
@@ -172,6 +176,11 @@ internal class HomeFragment @Inject constructor(
         } else {
             INACTIVE_ALPHA
         }
+
+        binding.homeWalkingButton.isVisible = viewState.isWalkingButtonVisible
+        binding.homeWalkingButton.setImageResource(
+            if (viewState.walkingModeEnabled) R.drawable.ic_stop_24 else R.drawable.ic_start_24
+        )
     }
 
     private fun setupCategoriesListener() {

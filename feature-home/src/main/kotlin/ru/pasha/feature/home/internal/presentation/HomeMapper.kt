@@ -5,14 +5,22 @@ import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 import ru.pasha.feature.home.internal.view.HomeBottomSheetView
 
 internal class HomeMapper(
-    private val limitPoisChecker: () -> Boolean,
+    private val reachedMaxMarkers: () -> Boolean,
 ) : BaseMapper<HomeState, HomeViewState>() {
     override fun toViewState(state: HomeState): HomeViewState {
         return HomeViewState(
             categoryState = state.category.toState(),
             markerButtonVisible = state.interactionModeEnabled,
-            markers = HomeBottomSheetView.State(state.markers, isLoading = state.isLoading),
-            addMarkerEnabled = !limitPoisChecker(),
+            sheetContentState = HomeBottomSheetView.State(
+                markers = if (state.walkingModeEnabled) listOf() else state.markers,
+                isLoading = state.isLoading,
+                isMenuVisible = !state.interactionModeEnabled,
+                inRouteTime = null,
+                routeLength = state.route?.length
+            ),
+            addMarkerEnabled = !reachedMaxMarkers(),
+            walkingModeEnabled = state.walkingModeEnabled,
+            isWalkingButtonVisible = state.route != null,
         )
     }
 

@@ -1,13 +1,8 @@
-package ru.pasha.feature.map.internal.domain
+package ru.pasha.feature.map.internal.data
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.pasha.common.map.GeoPoint
-import ru.pasha.feature.map.internal.data.BuildRouteSuccessData
-import ru.pasha.feature.map.internal.data.BuildRouteV1Request
-import ru.pasha.feature.map.internal.data.GetPointSuccessData
-import ru.pasha.feature.map.internal.data.GetPointV1Request
-import ru.pasha.feature.map.internal.data.RouteApi
 import ru.pasha.feature.map.internal.di.MapScope
 import ru.pasha.feature.map.internal.dto
 import ru.pasha.network.api.handleApiResponse

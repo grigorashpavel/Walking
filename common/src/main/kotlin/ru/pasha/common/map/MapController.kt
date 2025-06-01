@@ -10,8 +10,10 @@ interface MapController {
     fun setCenterMarkerVisibility(show: Boolean)
     fun toggleCreateMarkerFeature(isEnabled: Boolean)
     fun restoreMap()
+    fun setWalkingMode(enabled: Boolean)
 
     val markers: Flow<List<Marker>>
+    val route: Flow<Route?>
     fun isReachedMaxMarkers(): Boolean
     suspend fun createMarker(): Marker?
     fun removeMarkers()

@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.CompileOptions
 import convention.ApplicationBuildSettings
 import convention.configureAndroidCommon
 import convention.libs

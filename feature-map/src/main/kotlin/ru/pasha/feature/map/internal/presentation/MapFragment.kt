@@ -1,6 +1,7 @@
 package ru.pasha.feature.map.internal.presentation
 
 import android.content.Context
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,7 @@ import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import ru.pasha.common.R
+import ru.pasha.common.map.GeoPoint
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
 import ru.pasha.feature.map.databinding.MapFragmentBinding
@@ -121,7 +123,17 @@ internal class MapFragment @Inject constructor(
 
     private fun setupLocationOverlay() {
         val location = MyLocationNewOverlay(
-            GpsMyLocationProvider(requireContext()),
+            object : GpsMyLocationProvider(requireContext()) {
+                override fun onLocationChanged(location: Location) {
+                    mapControllerProvider.updateUserLocation(
+                        GeoPoint(
+                            lat = location.latitude.toFloat(),
+                            lon = location.longitude.toFloat(),
+                        )
+                    )
+                    super.onLocationChanged(location)
+                }
+            },
             binding.walkingMap,
         ).apply {
             enableMyLocation()

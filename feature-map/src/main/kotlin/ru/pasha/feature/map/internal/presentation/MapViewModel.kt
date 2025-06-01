@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
@@ -18,6 +19,11 @@ internal class MapViewModel @AssistedInject constructor(
 ) {
     init {
         mapControllerProvider.controllerFlow
+            .map {
+                it.copy(
+                    createdMarkers = if (it.walkingModeEnabled) emptyList() else it.createdMarkers
+                )
+            }
             .onEach { updateState { it } }
             .launchIn(viewModelScope)
 

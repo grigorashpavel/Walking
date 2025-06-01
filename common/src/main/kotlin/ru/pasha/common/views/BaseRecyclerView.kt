@@ -13,7 +13,7 @@ abstract class BaseViewHolder<B : ViewBinding, T>(binding: B) :
 }
 
 abstract class BaseRecyclerAdapter<B : ViewBinding, T>(
-    private var items: List<T> = emptyList(),
+    private val items: MutableList<T> = mutableListOf(),
     private val inflateBinding: (LayoutInflater, ViewGroup, Boolean) -> B,
 ) : RecyclerView.Adapter<BaseViewHolder<B, T>>() {
 
@@ -63,12 +63,13 @@ abstract class BaseRecyclerAdapter<B : ViewBinding, T>(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateItems(newItems: List<T>) {
+    fun updateItems(newItems: List<T>, forceUpdate: Boolean) {
         val diffResult = DiffUtil.calculateDiff(DiffCallback(items, newItems))
-        items = newItems.toList()
+        items.clear()
+        items.addAll(newItems.toList())
         diffResult.dispatchUpdatesTo(this)
 
-        notifyDataSetChanged()
+        if (forceUpdate) notifyDataSetChanged()
     }
 
     private inner class DiffCallback(
@@ -79,5 +80,6 @@ abstract class BaseRecyclerAdapter<B : ViewBinding, T>(
         override fun getNewListSize() = newList.size
         override fun areItemsTheSame(oldPos: Int, newPos: Int) = oldList[oldPos] == newList[newPos]
         override fun areContentsTheSame(oldPos: Int, newPos: Int) = oldList[oldPos] == newList[newPos]
+        override fun getChangePayload(oldPos: Int, newPos: Int): Any = Any()
     }
 }

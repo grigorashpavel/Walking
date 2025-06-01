@@ -5,10 +5,16 @@ import dagger.Module
 import dagger.multibindings.IntoSet
 import ru.pasha.core.navigation.FragmentInstantiator
 import ru.pasha.feature.banner.api.BannerFeature
+import ru.pasha.feature.history.api.HistoryFeature
 import ru.pasha.feature.home.api.HomeFeature
 import ru.pasha.feature.map.api.MapFeature
 
-@Module(includes = [BannerFeatureModule::class, MapFeatureModule::class, HomeFeatureModule::class])
+@Module(includes = [
+    BannerFeatureModule::class,
+    MapFeatureModule::class,
+    HomeFeatureModule::class,
+    HistoryFeatureModule::class]
+)
 interface FeaturesModule {
     @Binds
     @IntoSet
@@ -21,4 +27,8 @@ interface FeaturesModule {
     @Binds
     @IntoSet
     fun bindHomeFeature(feature: HomeFeature): FragmentInstantiator
+
+    @Binds
+    @IntoSet
+    fun bindHistoryFeature(feature: HistoryFeature): FragmentInstantiator
 }

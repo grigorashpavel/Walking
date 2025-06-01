@@ -11,4 +11,5 @@ data class MapState(
     val createMarkerOptionEnabled: Boolean,
     val createdMarkers: List<Marker>,
     val route: Route?,
+    val walkingModeEnabled: Boolean,
 )

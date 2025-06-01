@@ -9,14 +9,16 @@ import ru.pasha.common.Text
 import ru.pasha.common.map.GeoPoint
 import ru.pasha.common.map.MapController
 import ru.pasha.common.map.Marker
+import ru.pasha.common.map.Route
 import ru.pasha.feature.map.api.MapSettingsProvider
+import ru.pasha.feature.map.internal.data.RouteRepository
 import ru.pasha.feature.map.internal.data.entity
 import ru.pasha.feature.map.internal.di.MapScope
-import ru.pasha.feature.map.internal.domain.RouteRepository
 import ru.pasha.feature.map.internal.presentation.MapState
 import javax.inject.Inject
 
 @MapScope
+@Suppress("TooManyFunctions")
 internal class MapControllerProvider @Inject constructor(
     private val settingsProvider: MapSettingsProvider,
     private val repository: RouteRepository,
@@ -24,6 +26,12 @@ internal class MapControllerProvider @Inject constructor(
     val controllerFlow = MutableStateFlow(createDefaultState())
 
     var locationCallback: () -> Unit = {}
+
+    var userLocation: GeoPoint? = null
+
+    override val route: Flow<Route?> = controllerFlow
+        .distinctUntilChangedBy { it.route }
+        .map { it.route }
 
     override fun setCurrentLocation(point: GeoPoint) {
         update { copy(center = point) }
@@ -43,6 +51,10 @@ internal class MapControllerProvider @Inject constructor(
 
     override fun restoreMap() {
         update { createDefaultState() }
+    }
+
+    override fun setWalkingMode(enabled: Boolean) {
+        update { copy(walkingModeEnabled = enabled) }
     }
 
     override val markers: Flow<List<Marker>> = controllerFlow
@@ -81,8 +93,12 @@ internal class MapControllerProvider @Inject constructor(
     }
 
     override suspend fun buildRoute(name: String?): Text? {
+        val userNearPoint = userLocation?.let { repository.getNearestPoint(it) }
         return repository.buildRoute(
-            pois = controllerFlow.value.createdMarkers.map { it.point },
+            pois = buildList {
+                userNearPoint?.getOrNull()?.point?.entity()?.let(::add)
+                controllerFlow.value.createdMarkers.map { it.point }.let(::addAll)
+            },
             name = name
         ).fold(
             onSuccess = { response ->
@@ -103,6 +119,10 @@ internal class MapControllerProvider @Inject constructor(
         }
     }
 
+    fun updateUserLocation(location: GeoPoint) {
+        userLocation = location
+    }
+
     fun createDefaultState(): MapState {
         return MapState(
             settingsProvider.startZoom,
@@ -111,6 +131,7 @@ internal class MapControllerProvider @Inject constructor(
             createMarkerOptionEnabled = false,
             createdMarkers = listOf(),
             route = null,
+            walkingModeEnabled = false,
         )
     }
 

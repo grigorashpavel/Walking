@@ -16,8 +16,11 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import ru.pasha.common.di.ApplicationScope
+import ru.pasha.common.di.WalkingMapProvider
+import ru.pasha.common.map.MapController
 import ru.pasha.core.navigation.ScreenFactory
-import ru.pasha.feature.home.api.HomeFeature
+import ru.pasha.feature.history.api.HistoryFeature
+import ru.pasha.feature.map.api.MapFeature
 import ru.pasha.network.api.ApiFactory
 import ru.pasha.network.api.AuthController
 import ru.pasha.network.api.NetworkFactory
@@ -43,7 +46,7 @@ interface ApplicationModule {
         @Provides
         @StartScreen
         @ApplicationScope
-        fun provideStartScreen(feature: HomeFeature): Screen = feature.getHomeScreen()
+        fun provideStartScreen(feature: HistoryFeature): Screen = feature.getHistoryScreen()
 
         @SuppressLint("HardwareIds")
         @Provides
@@ -104,6 +107,18 @@ interface ApplicationModule {
         @Provides
         @ApplicationScope
         fun provideAuthSdk(context: Context) = YandexAuthSdk.create(YandexAuthOptions(context))
+
+        @Provides
+        fun provideMapProvider(
+            mapFeature: MapFeature,
+            mapFragmentFactory: FragmentFactory,
+        ): WalkingMapProvider {
+            return object : WalkingMapProvider {
+                override val fragmentFactory: FragmentFactory get() = mapFragmentFactory
+                override fun mapFragmentScreen(): Screen = mapFeature.getMapScreen()
+                override val mapController: MapController = mapFeature.mapController
+            }
+        }
     }
 
     @Binds

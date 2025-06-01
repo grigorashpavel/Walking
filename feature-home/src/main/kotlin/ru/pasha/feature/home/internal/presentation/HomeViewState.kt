@@ -6,6 +6,8 @@ import ru.pasha.feature.home.internal.view.HomeBottomSheetView
 internal data class HomeViewState(
     val categoryState: CategoriesWidgetView.State,
     val markerButtonVisible: Boolean,
-    val markers: HomeBottomSheetView.State,
+    val sheetContentState: HomeBottomSheetView.State,
     val addMarkerEnabled: Boolean,
+    val walkingModeEnabled: Boolean,
+    val isWalkingButtonVisible: Boolean,
 )

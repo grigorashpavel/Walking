@@ -3,14 +3,15 @@ package ru.pasha.feature.home.internal.presentation
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.pasha.common.Text
+import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.Marker
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
-import ru.pasha.feature.home.api.WalkingMapProvider
 import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 
 internal class HomeViewModel @AssistedInject constructor(
@@ -21,10 +22,14 @@ internal class HomeViewModel @AssistedInject constructor(
         category = Category.Nature,
         interactionModeEnabled = false,
         markers = emptyList(),
-        isLoading = false
+        isLoading = false,
+        walkingModeEnabled = false,
+        route = null,
     ),
 ) {
     private var isFirstPoint = true
+
+    private var buildJob: Job? = null
 
     init {
         walkingMapProvider.mapController.markers
@@ -41,6 +46,19 @@ internal class HomeViewModel @AssistedInject constructor(
                 updateState { copy(markers = markers) }
             }
             .launchIn(viewModelScope)
+
+        walkingMapProvider.mapController.route
+            .onEach { route ->
+                updateState { copy(route = route) }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun toggleWalkingMode() {
+        updateState {
+            walkingMapProvider.mapController.setWalkingMode(!walkingModeEnabled)
+            copy(walkingModeEnabled = !walkingModeEnabled)
+        }
     }
 
     fun categoriesStateSelected(state: CategoriesWidgetView.State) {
@@ -60,13 +78,22 @@ internal class HomeViewModel @AssistedInject constructor(
     }
 
     fun buildRoute() {
-        viewModelScope.launch {
+        buildJob?.cancel()
+        buildJob = viewModelScope.launch {
             updateState { copy(isLoading = true) }
+            walkingMapProvider.mapController.setCenterMarkerVisibility(show = false)
             val error = walkingMapProvider.mapController.buildRoute(null)
             if (error != null) {
+                walkingMapProvider.mapController.setCenterMarkerVisibility(show = true)
                 sideEffect { Error(error) }
             }
             updateState { copy(isLoading = false) }
+        }.apply {
+            invokeOnCompletion {
+                if (this.isCancelled) {
+                    walkingMapProvider.mapController.setCenterMarkerVisibility(show = true)
+                }
+            }
         }
     }
 
