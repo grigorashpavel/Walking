@@ -28,8 +28,11 @@ internal class MapViewModel @AssistedInject constructor(
             .launchIn(viewModelScope)
 
         mapControllerProvider.locationCallback = { enable ->
-            if (enable) checkLocationPermissions()
-            else stopLocationTracking()
+            if (enable) {
+                checkLocationPermissions()
+            } else {
+                stopLocationTracking()
+            }
         }
     }
 

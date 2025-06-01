@@ -3,7 +3,6 @@ package ru.pasha.feature.home.internal.view
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -44,8 +43,8 @@ internal class TopPanelBehaviour(
             initialHeight = newHeight
 
 //            if (showing == true) {
-                child.layoutParams.height = newHeight.coerceAtLeast(0)
-                child.requestLayout()
+            child.layoutParams.height = newHeight.coerceAtLeast(0)
+            child.requestLayout()
 //            }
         }
         return true

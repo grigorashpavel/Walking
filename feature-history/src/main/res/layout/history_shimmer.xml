@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ru.pasha.common.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="16dp"
+    android:background="?attr/walking_app_color_default_0">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/iconShimmer1"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/textShimmer1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textShimmer1"
+            app:shapeType="circle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/textShimmer1"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iconShimmer1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeType="rectangle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/iconShimmer2"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/textShimmer2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textShimmer2"
+            app:shapeType="circle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/textShimmer2"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iconShimmer2"
+            app:layout_constraintTop_toBottomOf="@id/textShimmer1"
+            app:shapeType="rectangle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/iconShimmer3"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/textShimmer3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textShimmer3"
+            app:shapeType="circle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/textShimmer3"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iconShimmer3"
+            app:layout_constraintTop_toBottomOf="@id/textShimmer2"
+            app:shapeType="rectangle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/iconShimmer4"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/textShimmer4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textShimmer4"
+            app:shapeType="circle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/textShimmer4"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iconShimmer4"
+            app:layout_constraintTop_toBottomOf="@id/textShimmer3"
+            app:shapeType="rectangle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/iconShimmer5"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/textShimmer5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/textShimmer5"
+            app:shapeType="circle"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+        <ru.pasha.common.ShimmerView
+            android:id="@+id/textShimmer5"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="16dp"
+            app:cornerRadius="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iconShimmer5"
+            app:shapeType="rectangle"
+            app:layout_constraintTop_toBottomOf="@id/textShimmer4"
+            app:shimmerColor="?attr/walking_app_color_default_100" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ru.pasha.common.ShimmerFrameLayout>

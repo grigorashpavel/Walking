@@ -65,7 +65,7 @@ abstract class BindingFragment<VB : ViewBinding> : NavigationProvider, Fragment(
         super.onDestroyView()
         isFragmentViewDestroyed = true
 
-        animators.forEach { it.cancel() }
+//        animators.forEach { it.cancel() }
         animators.clear()
     }
 
@@ -117,6 +117,7 @@ abstract class BindingFragment<VB : ViewBinding> : NavigationProvider, Fragment(
         }
     }
 
+    @Suppress("UnusedPrivateMember")
     private fun applyColorSchemeWithInsets() {
         activity?.window?.statusBarColor = resources.getColor(R.color.walking_app_night_500)
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)

@@ -76,7 +76,6 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
 
         binding.homeMarkersPreviewRecyclerView.isVisible = hasMarker && !hasRoute
         binding.homeMarkersRecyclerView.isVisible = hasMarker && !hasRoute
-
         binding.homeRemoveMarkersButton.isVisible = hasMarker && !hasRoute
 
         horizontalAdapter?.updateItems(state.markers, forceUpdate = false)
@@ -88,6 +87,7 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
             binding.homeRouteLengthTitle.setText(
                 "Длинна маршрута: ${String.format("%.2f", state.route.length)} м."
             )
+            binding.homeRouteLengthTitle.isVisible = true
         } else {
             binding.homeRouteLengthTitle.isVisible = false
             binding.homeRouteLengthTitle.setText("")

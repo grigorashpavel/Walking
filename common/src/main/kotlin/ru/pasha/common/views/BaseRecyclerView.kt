@@ -46,7 +46,13 @@ abstract class BaseRecyclerAdapter<B : ViewBinding, T>(
         }
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder<B, T>, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder<B, T>, position: Int) = Unit
+
+    override fun onBindViewHolder(
+        holder: BaseViewHolder<B, T>,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
         holder.bind(items[position], position)
     }
 

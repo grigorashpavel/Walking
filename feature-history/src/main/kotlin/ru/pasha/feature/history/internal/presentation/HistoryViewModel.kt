@@ -29,13 +29,15 @@ internal class HistoryViewModel @AssistedInject constructor(
     private var removeJob: Job? = null
     private var navigationJob: Job? = null
 
+    private var pageIndex = 0
+
     init {
         loadRoutes()
     }
 
     fun loadRoutes() {
-        updateState { HistoryState.Loading }
         loadJob?.cancel()
+        updateState { HistoryState.Loading }
         loadJob = viewModelScope.launch {
             repository.getSavedPreviewRoutes()?.let {
                 updateState {
@@ -55,7 +57,7 @@ internal class HistoryViewModel @AssistedInject constructor(
                 }
             }
 
-            repository.getRoutes(FIRST_PAGE_INDEX, PAGE_SIZE).getOrNull()
+            repository.getRoutes(pageIndex, PAGE_SIZE).getOrNull()
                 ?.let {
                     if (it.message != null) {
                         updateState { HistoryState.Error(Text.Constant(it.message)) }
@@ -72,7 +74,10 @@ internal class HistoryViewModel @AssistedInject constructor(
                                     localRoutes = emptyList()
                                 )
 
-                                is HistoryState.Success -> copy(remoteRoutes = it.routes.map { it.entity() })
+                                is HistoryState.Success -> {
+                                    pageIndex++
+                                    copy(remoteRoutes = it.routes.map { it.entity() })
+                                }
                             }
                         }
                     }
@@ -156,7 +161,6 @@ internal class HistoryViewModel @AssistedInject constructor(
     }
 
     private companion object {
-        const val FIRST_PAGE_INDEX = 0
         const val PAGE_SIZE = 15
         const val TIMEOUT = 5000L
     }

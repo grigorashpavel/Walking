@@ -280,6 +280,6 @@ internal class HomeFragment @Inject constructor(
         const val ACTIVE_ALPHA = 1f
         const val INACTIVE_ALPHA = 0.5f
 
-        const val SHIMMER_HIDING_DURATION = 1000L
+        const val SHIMMER_HIDING_DURATION = 2000L
     }
 }

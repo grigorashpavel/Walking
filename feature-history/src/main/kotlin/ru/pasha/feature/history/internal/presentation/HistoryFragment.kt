@@ -1,9 +1,11 @@
 package ru.pasha.feature.history.internal.presentation
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.animation.doOnEnd
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,6 +46,7 @@ internal class HistoryFragment @Inject constructor(
             downloadCallback = viewModel::downloadRoute,
             removeLocalCallback = viewModel::removeRoute,
             openCallback = viewModel::navigateToPreview,
+            loadMore = viewModel::loadRoutes,
         ).also { historyAdapter = it }
         binding.historyRecyclerView.layoutManager = LinearLayoutManager(requireContext()).apply {
             orientation = LinearLayoutManager.VERTICAL
@@ -51,6 +54,7 @@ internal class HistoryFragment @Inject constructor(
     }
 
     override fun render(viewState: HistoryViewState) {
+        renderShimmer(viewState)
         binding.historyProgressBar.isIndeterminate = viewState.isLoading
 
         binding.historyRecyclerView.isVisible = viewState.error == null
@@ -77,6 +81,23 @@ internal class HistoryFragment @Inject constructor(
         super.onDestroyView()
     }
 
+    private fun renderShimmer(viewState: HistoryViewState) {
+        if (viewState.isLoading) {
+            binding.historyShimmer.root.isVisible = true
+        } else {
+            binding.historyShimmer.root.safeAnimate {
+                ObjectAnimator
+                    .ofFloat(binding.historyShimmer.root, View.ALPHA, 1f, 0f).apply {
+                        duration = SHIMMER_HIDING_DURATION
+                        doOnEnd {
+                            binding.historyShimmer.root.stopShimmer()
+                            binding.historyShimmer.root.isVisible = false
+                        }
+                    }
+            }
+        }
+    }
+
     private fun showSnackbar(message: String) {
         Snackbar.make(
             binding.root,
@@ -90,5 +111,9 @@ internal class HistoryFragment @Inject constructor(
                 )
             )
         }.show()
+    }
+
+    private companion object {
+        const val SHIMMER_HIDING_DURATION = 1000L
     }
 }
