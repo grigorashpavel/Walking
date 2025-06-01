@@ -93,6 +93,7 @@ internal class MapControllerProvider @Inject constructor(
     }
 
     override fun switchLocationListen(enabled: Boolean) {
+        if (!enabled) userLocation = null
         locationCallback(enabled)
     }
 
