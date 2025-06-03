@@ -8,6 +8,7 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.AppNavigator
+import kotlinx.coroutines.flow.Flow
 import ru.pasha.common.di.findDependency
 import ru.pasha.common.extensions.isNightMode
 import ru.pasha.core.navigation.BaseNavigationActivity
@@ -76,7 +77,7 @@ class MainActivity : BaseNavigationActivity(), BannerUiDependencies {
         setTheme(theme)
     }
 
-    override val navigateToAuthAction: suspend () -> Unit get() = {
+    override val navigateToAuthAction: suspend () -> Flow<Boolean> get() = {
         authManager.launchAuthScreen()
     }
 }

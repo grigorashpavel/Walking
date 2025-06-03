@@ -19,11 +19,12 @@ import ru.pasha.common.di.ApplicationScope
 import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.MapController
 import ru.pasha.core.navigation.ScreenFactory
-import ru.pasha.feature.home.api.HomeArguments
-import ru.pasha.feature.home.api.HomeFeature
+import ru.pasha.feature.banner.api.BannerFeature
 import ru.pasha.feature.map.api.MapFeature
 import ru.pasha.network.api.ApiFactory
 import ru.pasha.network.api.AuthController
+import ru.pasha.network.api.ConnectionTracker
+import ru.pasha.network.api.ConnectionTrackerFactory
 import ru.pasha.network.api.NetworkFactory
 import ru.pasha.network.api.SessionApi
 import ru.pasha.walking.auth.AuthControllerImpl
@@ -38,6 +39,11 @@ interface ApplicationModule {
     companion object {
         @Provides
         @ApplicationScope
+        fun provideConnectionTracker(context: Context): ConnectionTracker =
+            ConnectionTrackerFactory.create(context)
+
+        @Provides
+        @ApplicationScope
         fun provideCicerone(): Cicerone<Router> = Cicerone.create()
 
         @Provides
@@ -47,9 +53,7 @@ interface ApplicationModule {
         @Provides
         @StartScreen
         @ApplicationScope
-        fun provideStartScreen(feature: HomeFeature): Screen = feature.getHomeScreen(
-            HomeArguments(route = null)
-        )
+        fun provideStartScreen(feature: BannerFeature): Screen = feature.getBannerScreen()
 
         @SuppressLint("HardwareIds")
         @Provides

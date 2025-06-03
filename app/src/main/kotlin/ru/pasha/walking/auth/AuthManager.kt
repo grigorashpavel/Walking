@@ -7,6 +7,7 @@ import com.yandex.authsdk.YandexAuthResult
 import com.yandex.authsdk.YandexAuthSdk
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.map
 import ru.pasha.common.di.ApplicationScope
 import javax.inject.Inject
 
@@ -30,13 +31,14 @@ class AuthManagerImpl @Inject constructor(
         }
     }
 
-    override fun launchAuthScreen() {
+    override fun launchAuthScreen(): Flow<Boolean> {
         authLauncher?.launch(YandexAuthLoginOptions())
+        return authResult.map { it is AuthResult.Success }
     }
 }
 
 interface AuthManager {
-    fun launchAuthScreen()
+    fun launchAuthScreen(): Flow<Boolean>
     fun registerLauncher(activity: AppCompatActivity)
     val authResult: Flow<AuthResult>
 }

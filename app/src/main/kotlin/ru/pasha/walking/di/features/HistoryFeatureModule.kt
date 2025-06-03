@@ -20,10 +20,17 @@ interface HistoryFeatureModule {
         }
 
         @Provides
-        fun provideNavigation(router: Router, homeFeature: HomeFeature): NavigationProvider {
+        fun provideNavigation(
+            router: Router,
+            homeFeature: HomeFeature,
+        ): NavigationProvider {
             return object : NavigationProvider {
                 override fun navigateToPreview(route: Route) {
-                    router.newRootChain(homeFeature.getHomeScreen(HomeArguments(route)))
+                    router.newRootChain(
+                        homeFeature.getHomeScreen(
+                            HomeArguments(route = route)
+                        )
+                    )
                 }
 
                 override fun navigateBack() {

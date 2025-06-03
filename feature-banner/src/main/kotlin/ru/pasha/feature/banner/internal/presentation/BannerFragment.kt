@@ -38,7 +38,9 @@ internal class BannerFragment @Inject constructor(
     private var autoScrollJob: Job? = null
     private val adapter = BannerAdapter()
 
-    override fun createViewModel(): BannerViewModel = viewModelFactory.create()
+    private val authAction by lazy { findDependency<BannerUiDependencies>().navigateToAuthAction }
+
+    override fun createViewModel(): BannerViewModel = viewModelFactory.create(authAction)
 
     override fun onApplyInsets(insets: WindowInsetsCompat): WindowInsetsCompat {
         return insets.also(::applyInsets)
@@ -50,9 +52,7 @@ internal class BannerFragment @Inject constructor(
     ): BannerFragmentBinding {
         return BannerFragmentBinding.inflate(inflater, container, false).apply {
             bannerButton.setOnClickListener {
-                viewModel.navigateToAuth(
-                    findDependency<BannerUiDependencies>().navigateToAuthAction
-                )
+                viewModel.tryNavigate()
             }
         }
     }

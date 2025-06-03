@@ -1,10 +1,14 @@
 package ru.pasha.feature.banner.internal.presentation
 
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.pasha.common.ScaleType
@@ -13,20 +17,27 @@ import ru.pasha.common.models.ImageModel
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
 import ru.pasha.feature.banner.R
+import ru.pasha.feature.banner.api.BannerNavigationProvider
+import ru.pasha.feature.banner.api.ConnectionProvider
 import ru.pasha.feature.banner.internal.domain.BannerEntity
 
-internal class BannerViewModel @AssistedInject constructor() :
-    BaseViewModel<BannerState, BannerViewState>(
-        mapper = BannerMapper(),
-        initialState = BannerState.Loading
-    ) {
+internal class BannerViewModel @AssistedInject constructor(
+    private val connectionProvider: ConnectionProvider,
+    private val navigationProvider: BannerNavigationProvider,
+    @Assisted
+    private val authAction: suspend () -> Flow<Boolean>
+) : BaseViewModel<BannerState, BannerViewState>(
+    mapper = BannerMapper(),
+    initialState = BannerState.Loading
+) {
+    private var navJob: Job? = null
 
     init { loadBanners() }
 
     private fun loadBanners() {
         viewModelScope.launch {
             val banners = withContext(Dispatchers.IO) {
-                delay(5000)
+                delay(1000)
 
                 listOf(
                     BannerEntity(
@@ -69,8 +80,19 @@ internal class BannerViewModel @AssistedInject constructor() :
         }
     }
 
-    fun navigateToAuth(action: suspend () -> Unit) =
-        viewModelScope.launch { action() }
+    fun tryNavigate() {
+        navJob?.cancel()
+        if (!connectionProvider.hasConnection) {
+            return navigateToHome()
+        }
+
+        navJob = viewModelScope.launch {
+            val authed = authAction().first()
+            if (authed) navigateToHome()
+        }
+    }
+
+    private fun navigateToHome() = navigationProvider.navigateToHomeAction()
 
     fun retryLoading() {
         updateState { BannerState.Loading }
@@ -79,7 +101,7 @@ internal class BannerViewModel @AssistedInject constructor() :
 
     @AssistedFactory
     interface Factory {
-        fun create(): BannerViewModel
+        fun create(authAction: suspend () -> Flow<Boolean>): BannerViewModel
     }
 }
 
