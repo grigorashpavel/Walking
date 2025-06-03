@@ -20,7 +20,7 @@ internal class HomeMapper(
             ),
             addMarkerEnabled = !reachedMaxMarkers(),
             walkingModeEnabled = state.walkingModeEnabled,
-            isWalkingButtonVisible = state.route != null,
+            hasRoute = state.route != null,
             isPreviewMode = state.previewModeEnabled,
             isLocationButtonVisible = state.locationTrackingEnabled,
         )

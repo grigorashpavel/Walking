@@ -9,7 +9,7 @@ internal data class HomeViewState(
     val sheetContentState: HomeBottomSheetView.State,
     val addMarkerEnabled: Boolean,
     val walkingModeEnabled: Boolean,
-    val isWalkingButtonVisible: Boolean,
+    val hasRoute: Boolean,
     val isPreviewMode: Boolean,
     val isLocationButtonVisible: Boolean,
 )

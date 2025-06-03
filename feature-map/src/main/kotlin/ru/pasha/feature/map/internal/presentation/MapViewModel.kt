@@ -20,9 +20,7 @@ internal class MapViewModel @AssistedInject constructor(
     init {
         mapControllerProvider.controllerFlow
             .map {
-                it.copy(
-                    createdMarkers = if (it.walkingModeEnabled) emptyList() else it.createdMarkers
-                )
+                it.copy(createdMarkers = if (it.walkingModeEnabled) emptyList() else it.createdMarkers)
             }
             .onEach { updateState { it } }
             .launchIn(viewModelScope)

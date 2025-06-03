@@ -86,12 +86,15 @@ internal class HomeViewModel @AssistedInject constructor(
 
     fun toggleWalkingMode() {
         val canTrackLocation = state.locationTrackingEnabled
+
         updateState {
+            val toEnabled = !walkingModeEnabled
             if (canTrackLocation) {
-                switchLocation(!walkingModeEnabled)
+                switchLocation(toEnabled)
             }
-            walkingMapProvider.mapController.setWalkingMode(!walkingModeEnabled)
-            copy(walkingModeEnabled = !walkingModeEnabled)
+            walkingMapProvider.mapController.setWalkingMode(toEnabled)
+            walkingMapProvider.mapController.setCenterMarkerVisibility(!toEnabled)
+            copy(walkingModeEnabled = toEnabled)
         }
     }
 

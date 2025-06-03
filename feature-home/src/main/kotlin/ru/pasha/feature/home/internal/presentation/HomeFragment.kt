@@ -200,7 +200,7 @@ internal class HomeFragment @Inject constructor(
             INACTIVE_ALPHA
         }
 
-        binding.homeWalkingButton.isVisible = viewState.isWalkingButtonVisible
+        binding.homeWalkingButton.isVisible = viewState.hasRoute
         binding.homeWalkingButton.setImageResource(
             if (viewState.walkingModeEnabled) R.drawable.ic_stop_24 else R.drawable.ic_start_24
         )
@@ -230,8 +230,8 @@ internal class HomeFragment @Inject constructor(
 
     private fun renderButtons(viewState: HomeViewState) {
         val needShow = !viewState.walkingModeEnabled && !viewState.isPreviewMode
-        binding.homeMarkerButton.isVisible = needShow
-        binding.homeBuildRouteButton.isVisible = needShow
+        binding.homeMarkerButton.isVisible = needShow && !viewState.hasRoute
+        binding.homeBuildRouteButton.isVisible = needShow && !viewState.hasRoute
         binding.homeLocationButton.isVisible = viewState.isLocationButtonVisible
     }
 

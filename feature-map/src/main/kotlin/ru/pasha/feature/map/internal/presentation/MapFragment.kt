@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
-import androidx.annotation.ColorInt
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.WindowInsetsCompat
 import org.osmdroid.config.Configuration
@@ -233,7 +232,7 @@ internal class MapFragment @Inject constructor(
         }
         viewState.markersToDraw.forEach { marker ->
             if (!currentMarkers.containsKey(marker.id)) {
-                currentMarkers[marker.id] = createPoiMarker(marker.color).also { m ->
+                currentMarkers[marker.id] = createPoiMarker(marker).also { m ->
                     binding.walkingMap.overlays.add(m)
                 }
             }
@@ -257,11 +256,11 @@ internal class MapFragment @Inject constructor(
         }.also(binding.walkingMap::addMapListener)
     }
 
-    private fun createPoiMarker(@ColorInt color: Int): Marker {
+    private fun createPoiMarker(marker: ru.pasha.common.map.Marker): Marker {
         return Marker(binding.walkingMap).apply {
-            position = location
+            position = marker.point.point()
             icon = markerIcon
-            icon.setTint(color)
+            icon.setTint(marker.color)
         }
     }
 
