@@ -1,4 +1,4 @@
-package ru.pasha.feature.settings.internal.data
+package ru.pasha.feature.home.internal.data
 
 import retrofit2.Response
 import retrofit2.http.Body
@@ -7,11 +7,7 @@ import retrofit2.http.POST
 import ru.pasha.network.api.ResponseWithStatus
 import java.util.UUID
 
-internal interface SettingsApi {
-    @POST("v1/end-session")
-    suspend fun endSession(
-        @Header("X-Idempotency-Key") idempotencyKey: UUID,
-    ): Response<ResponseWithStatus<EndSessionSuccessData>>
+internal interface HomeApi {
 
     @POST("v1/feedback")
     suspend fun report(

@@ -1,13 +1,19 @@
 @file:Suppress("MagicNumber")
 
-package ru.pasha.feature.home.internal.view
+package ru.pasha.common.views
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.os.Bundle
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.view.animation.CycleInterpolator
 import android.view.animation.TranslateAnimation
 import android.widget.Button
@@ -16,11 +22,71 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginTop
+import androidx.core.view.setPadding
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
+import androidx.core.view.updatePadding
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import ru.pasha.common.R
 import ru.pasha.common.Text
 import ru.pasha.common.extensions.dpToPx
 import ru.pasha.common.extensions.dpToPxF
 import ru.pasha.common.format
-import ru.pasha.feature.home.R
+
+class FeedbackDialog : DialogFragment() {
+    private lateinit var feedbackView: FeedbackView
+
+    interface Callback {
+        fun onSubmit(rating: Int, comment: String)
+        fun onCancel()
+    }
+
+    var callback: Callback? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        feedbackView = FeedbackView(requireContext()).apply {
+            setListener(object : FeedbackView.FeedbackListener {
+                override fun onSubmit(rating: Int, comment: String) {
+                    callback?.onSubmit(rating, comment)
+                    dismiss()
+                }
+
+                override fun onCancel() {
+                    callback?.onCancel()
+                    dismiss()
+                }
+            })
+        }
+        return feedbackView
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.apply {
+            setBackgroundDrawableResource(android.R.color.transparent)
+            setDimAmount(0.5f)
+        }
+        return dialog
+    }
+
+    companion object {
+        private const val TAG = "FeedbackDialog"
+
+        fun show(manager: FragmentManager, callback: Callback) {
+            FeedbackDialog().apply {
+                this.callback = callback
+            }.show(manager, TAG)
+        }
+    }
+}
+
 
 class FeedbackView @JvmOverloads constructor(
     context: Context,
@@ -41,6 +107,7 @@ class FeedbackView @JvmOverloads constructor(
     private val starContainer = LinearLayout(context).apply {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER
+        setPadding(16.dpToPx)
     }
 
     init {
@@ -49,10 +116,17 @@ class FeedbackView @JvmOverloads constructor(
         setBackgroundColor(
             ResourcesCompat.getColor(
                 resources,
-                ru.pasha.common.R.color.walking_app_night_500,
+                R.color.walking_app_night_500,
                 context.theme
             )
         )
+        setPadding(
+            26.dpToPx,
+            36.dpToPx,
+            26.dpToPx,
+            36.dpToPx
+        )
+        setBackgroundResource(R.drawable.feedback_background)
     }
 
     fun setListener(listener: FeedbackListener) {
@@ -61,18 +135,22 @@ class FeedbackView @JvmOverloads constructor(
 
     private fun setupView() {
         TextView(context).apply {
-            text = Text.Resource(ru.pasha.common.R.string.walking_app_rate_route).format(context)
-            setTextColor(Color.parseColor("#2D3748"))
+            val text = if (isReport) {
+                Text.Resource(R.string.walking_app_feedback_report)
+            } else {
+                Text.Resource(R.string.walking_app_rate_route)
+            }
+
+            this.text = text.format(context)
+            setTextColor(resources.getColor(R.color.walking_app_night_900))
             textSize = 20f
             gravity = Gravity.CENTER
             addView(this, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
-//            updateLayoutParams<MarginLayoutParams> {
-//                updateMargins(bottom =  16.dpToPx)
-//            }
         }
         addView(starContainer, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
 
-        repeat(5) { index ->
+        val rateSize = if (isReport) 0 else 5
+        repeat(rateSize) { index ->
             ImageView(context).apply {
                 setImageResource(R.drawable.ic_star_outline)
                 layoutParams = LayoutParams(40.dpToPx, 40.dpToPx).apply {
@@ -84,28 +162,33 @@ class FeedbackView @JvmOverloads constructor(
             }
         }
 
+        val hint = if (isReport) {
+            Text.Resource(R.string.walking_app_feedback_report_hint)
+        } else {
+            Text.Resource(R.string.walking_app_your_comment)
+        }
         etComment = EditText(context).apply {
-            hint = Text.Resource(ru.pasha.common.R.string.walking_app_your_comment).format(context)
+            this.hint = hint.format(context)
             background = createInputBackground()
             setPadding(16.dpToPx, 12.dpToPx, 16.dpToPx, 12.dpToPx)
             gravity = Gravity.TOP
         }
-        addView(etComment, LayoutParams.MATCH_PARENT, 120.dpToPx).apply {
-//            updateLayoutParams<MarginLayoutParams> {
-//                updateMargins(top = 16.dpToPx, bottom = 24.dpToPx)
-//            }
+        addView(etComment, LayoutParams.MATCH_PARENT, 164.dpToPx)
+        etComment.updateLayoutParams<MarginLayoutParams> {
+            updateMargins(left = 16.dpToPx, right = 20.dpToPx)
         }
 
         val buttonContainer = LinearLayout(context).apply {
             orientation = HORIZONTAL
             gravity = Gravity.END
+            setPadding(16.dpToPx)
         }
         addView(buttonContainer, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
 
         Button(context).apply {
             text = Text.Resource(ru.pasha.common.R.string.walking_app_your_comment_cancel)
                 .format(context)
-            setTextColor(Color.parseColor("#4A5568"))
+            setTextColor(resources.getColor(R.color.walking_app_night_900))
             background = null
             setOnClickListener { listener?.onCancel() }
             buttonContainer.addView(this)
@@ -114,10 +197,11 @@ class FeedbackView @JvmOverloads constructor(
         Button(context).apply {
             text = Text.Resource(ru.pasha.common.R.string.walking_app_your_comment_send)
                 .format(context)
-            setTextColor(Color.WHITE)
+            setTextColor(resources.getColor(R.color.walking_app_night_900))
             background = createSubmitButtonBackground()
             setOnClickListener { handleSubmit() }
             buttonContainer.addView(this, LayoutParams(120.dpToPx, 48.dpToPx).apply {
+                marginStart = 16.dpToPx
                 marginStart = 16.dpToPx
             })
         }
@@ -136,19 +220,32 @@ class FeedbackView @JvmOverloads constructor(
     }
 
     private fun handleSubmit() {
-        if (rating == 0) {
-            animateError()
+        if (etComment.text.isBlank()) {
+            animateErrorText()
+            return
+        } else if (!isReport && rating == 0) {
+            animateErrorStars()
             return
         }
         listener?.onSubmit(rating, etComment.text.toString())
     }
 
-    private fun animateError() {
+    private fun animateErrorStars() {
         val shake = TranslateAnimation(0f, 30f, 0f, 0f).apply {
             duration = 300
             interpolator = CycleInterpolator(3f)
         }
+
         starContainer.startAnimation(shake)
+    }
+
+    private fun animateErrorText() {
+        val shake = TranslateAnimation(0f, 30f, 0f, 0f).apply {
+            duration = 300
+            interpolator = CycleInterpolator(3f)
+        }
+
+        etComment.startAnimation(shake)
     }
 
     private fun createInputBackground(): Drawable {
@@ -161,7 +258,19 @@ class FeedbackView @JvmOverloads constructor(
     private fun createSubmitButtonBackground(): Drawable {
         val shape = GradientDrawable()
         shape.cornerRadius = 24.dpToPxF
-        shape.setColor(Color.parseColor("#48BB78"))
+        shape.setColor(resources.getColor(R.color.walking_app_soft_green))
         return shape
+    }
+
+    companion object {
+        private var isReport = false
+        fun show(context: Context, isReport: Boolean, callback: FeedbackDialog.Callback) {
+            this.isReport = isReport
+            val manager = (context as? androidx.fragment.app.FragmentActivity)
+                ?.supportFragmentManager
+                ?: throw IllegalArgumentException("Context must be FragmentActivity")
+
+            FeedbackDialog.show(manager, callback)
+        }
     }
 }

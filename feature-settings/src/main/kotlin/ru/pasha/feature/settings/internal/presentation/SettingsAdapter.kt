@@ -20,6 +20,7 @@ internal class SettingsAdapter(
     private val changeLanguageCallback: (Language) -> Unit,
     private val changeThemeCallback: (Theme) -> Unit,
     private val changeLocationOptionCallback: (LocationTracking) -> Unit,
+    private val feedbackCallback: () -> Unit,
 ) : BaseRecyclerAdapter<SettingsItemBinding, SettingsEntity>(
     inflateBinding = { inflater, parent, attach ->
         SettingsItemBinding.inflate(inflater, parent, attach)
@@ -114,6 +115,20 @@ internal class SettingsAdapter(
                 }
             }
             Unit
+        }
+
+        SettingsEntity.Feedback -> with(this) {
+            itemSwitch.isVisible = false
+            spinner.isVisible = false
+
+            icon.setImageResource(R.drawable.ic_feedback_24)
+            settingsTitle.setText(
+                Text.Resource(ru.pasha.common.R.string.walking_app_feedback)
+            )
+
+            setOnItemClickListener {
+                feedbackCallback()
+            }
         }
     }
 

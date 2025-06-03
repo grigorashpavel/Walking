@@ -66,4 +66,8 @@
     <string name="walking_app_roads_subtitle">Оптимальные пешеходные маршруты по тротуарам и пешеходным зонам</string>
 
     <string name="walking_app_listen_location">Отслеживать местоположение</string>
+
+    <string name="walking_app_feedback">Обратная связь</string>
+    <string name="walking_app_feedback_report">Сообщить о проблеме</string>
+    <string name="walking_app_feedback_report_hint">Опишите проблему…</string>
 </resources>

@@ -3,6 +3,9 @@
 package ru.pasha.walking.auth
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import ru.pasha.common.di.ApplicationScope
@@ -44,6 +47,7 @@ class AuthControllerImpl @Inject constructor(
             sessionApi.startSession(request)
         }.fold(
             onSuccess = {
+                (sessionFlow as MutableSharedFlow).emit(it.id)
                 return it.id
             },
             onFailure = {
@@ -54,6 +58,8 @@ class AuthControllerImpl @Inject constructor(
     }
 
     override fun getSessionKey(): String? = sessionStorage.getSessionKey()
+
+    override val sessionFlow: Flow<String?> = MutableStateFlow(sessionStorage.getSessionKey())
 
     override fun logout() {
         sessionStorage.clearSession()

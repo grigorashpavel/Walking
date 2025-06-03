@@ -14,4 +14,6 @@ internal sealed interface SettingsEntity {
     data class LocationTracking(
         val enabled: Boolean,
     ) : SettingsEntity
+
+    data object Feedback: SettingsEntity
 }

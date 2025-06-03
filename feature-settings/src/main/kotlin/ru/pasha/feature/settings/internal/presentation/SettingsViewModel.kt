@@ -1,7 +1,10 @@
 package ru.pasha.feature.settings.internal.presentation
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.launch
 import ru.pasha.common.Text
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
@@ -41,7 +44,17 @@ internal class SettingsViewModel @AssistedInject constructor(
         updateState { copy(locationTracking = newOption) }
     }
 
-    fun logout() = settingsNavigationProvider.logout()
+    fun logout() {
+        viewModelScope.launch { repository.endSession() }
+        settingsNavigationProvider.logout()
+    }
+
+    fun reportProblem(message: String) {
+        viewModelScope.launch {
+            val res = repository.reportProblem(message)
+            Log.d("===", res.toString())
+        }
+    }
 
     @AssistedFactory
     interface Factory {

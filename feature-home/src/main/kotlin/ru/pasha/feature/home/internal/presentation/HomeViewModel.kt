@@ -13,10 +13,10 @@ import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.Marker
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
-import ru.pasha.feature.home.R
 import ru.pasha.feature.home.api.HomeArguments
 import ru.pasha.feature.home.api.HomeNavigationProvider
 import ru.pasha.feature.home.api.LocationTrackerSettingProvider
+import ru.pasha.feature.home.internal.data.HomeRepository
 import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 
 internal class HomeViewModel @AssistedInject constructor(
@@ -25,6 +25,7 @@ internal class HomeViewModel @AssistedInject constructor(
     @Assisted
     private val homeArguments: HomeArguments,
     private val locationTrackerSettingProvider: LocationTrackerSettingProvider,
+    private val homeRepository: HomeRepository,
 ) : BaseViewModel<HomeState, HomeViewState>(
     mapper = HomeMapper(walkingMapProvider.mapController::isReachedMaxMarkers),
     initialState = HomeState(
@@ -35,10 +36,11 @@ internal class HomeViewModel @AssistedInject constructor(
         walkingModeEnabled = false,
         route = homeArguments.route,
         previewModeEnabled = homeArguments.route != null,
-        locationTrackingEnabled = false
+        locationTrackingEnabled = locationTrackerSettingProvider.isEnabled,
     ),
 ) {
     private var isFirstPoint = true
+    private var needShowFeedback = false
 
     private var buildJob: Job? = null
 
@@ -84,11 +86,14 @@ internal class HomeViewModel @AssistedInject constructor(
         navigationProvider.navigateToSettings()
     }
 
-    fun toggleWalkingMode() {
+    fun toggleWalkingMode(target: Boolean? = null) {
         val canTrackLocation = state.locationTrackingEnabled
 
         updateState {
-            val toEnabled = !walkingModeEnabled
+            val toEnabled = target ?: !walkingModeEnabled
+
+            if (toEnabled) needShowFeedback = true
+
             if (canTrackLocation) {
                 switchLocation(toEnabled)
             }
@@ -147,10 +152,6 @@ internal class HomeViewModel @AssistedInject constructor(
         }
     }
 
-    fun setWalkingMode(target: Boolean) {
-        updateState { copy(walkingModeEnabled = target) }
-    }
-
     fun toggleMapState(willInteraction: Boolean) {
         if (!willInteraction) {
             walkingMapProvider.mapController.restoreMap()
@@ -164,6 +165,19 @@ internal class HomeViewModel @AssistedInject constructor(
     fun removeMarkers() = walkingMapProvider.mapController.removeMarkers()
 
     fun removeMarker(marker: Marker) = walkingMapProvider.mapController.removeMarker(marker)
+
+    fun tryShowFeedback() {
+        if (state.route != null && needShowFeedback) {
+            needShowFeedback = false
+            sideEffect { Feedback }
+        }
+    }
+
+    fun reportRouteFeedback(message: String, rating: Int) {
+        viewModelScope.launch {
+            homeRepository.reportRouteFeedback(message, rating)
+        }
+    }
 
     private fun CategoriesWidgetView.Category.toSimpleCategory(): Category {
         return when (this) {
@@ -181,3 +195,4 @@ internal class HomeViewModel @AssistedInject constructor(
 
 data class Error(val title: Text) : SideEffect
 data class FirstPoi(val title: Text, val subtitle: Text) : SideEffect
+data object Feedback : SideEffect

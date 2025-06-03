@@ -23,6 +23,8 @@ import ru.pasha.common.format
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
 import ru.pasha.common.pattern.extractScreenParams
+import ru.pasha.common.views.FeedbackDialog
+import ru.pasha.common.views.FeedbackView
 import ru.pasha.feature.home.R
 import ru.pasha.feature.home.databinding.HomeFragmentBinding
 import ru.pasha.feature.home.internal.view.HomeBottomSheetCallback
@@ -113,10 +115,7 @@ internal class HomeFragment @Inject constructor(
 
     override fun render(viewState: HomeViewState) {
         binding.homeCategoriesWidget.setState(viewState.categoryState)
-        binding.homeMarkerButton.isVisible = viewState.markerButtonVisible
-
         binding.homeBottomSheet.render(viewState.sheetContentState)
-        renderPoisButton(viewState)
         renderPreviewMode(viewState)
         renderButtons(viewState)
 
@@ -152,6 +151,7 @@ internal class HomeFragment @Inject constructor(
             startMapInteraction()
         }
         binding.homeBackButton.setOnClickListener {
+            viewModel.tryShowFeedback()
             endMapInteraction()
         }
         binding.homeMarkerButton.setOnClickListener {
@@ -187,23 +187,9 @@ internal class HomeFragment @Inject constructor(
         bottomSheetBehavior?.isDraggable = false
 
         viewModel.toggleMapState(willInteraction = false)
-        viewModel.setWalkingMode(false)
+        viewModel.toggleWalkingMode(false)
         viewModel.toggleInteractionMode(false)
         viewModel.switchLocation(enabled = false)
-    }
-
-    private fun renderPoisButton(viewState: HomeViewState) {
-        binding.homeMarkerButton.isEnabled = viewState.addMarkerEnabled
-        binding.homeMarkerButton.alpha = if (viewState.addMarkerEnabled) {
-            ACTIVE_ALPHA
-        } else {
-            INACTIVE_ALPHA
-        }
-
-        binding.homeWalkingButton.isVisible = viewState.hasRoute
-        binding.homeWalkingButton.setImageResource(
-            if (viewState.walkingModeEnabled) R.drawable.ic_stop_24 else R.drawable.ic_start_24
-        )
     }
 
     private fun renderShimmer() {
@@ -230,9 +216,21 @@ internal class HomeFragment @Inject constructor(
 
     private fun renderButtons(viewState: HomeViewState) {
         val needShow = !viewState.walkingModeEnabled && !viewState.isPreviewMode
-        binding.homeMarkerButton.isVisible = needShow && !viewState.hasRoute
-        binding.homeBuildRouteButton.isVisible = needShow && !viewState.hasRoute
+
         binding.homeLocationButton.isVisible = viewState.isLocationButtonVisible
+
+        binding.homeMarkerButton.isEnabled = viewState.addMarkerEnabled
+        binding.homeMarkerButton.alpha = if (viewState.addMarkerEnabled) {
+            ACTIVE_ALPHA
+        } else {
+            INACTIVE_ALPHA
+        }
+        binding.homeMarkerButton.isVisible = needShow && !viewState.hasRoute
+
+        binding.homeBuildRouteButton.isVisible = needShow && !viewState.hasRoute
+        binding.homeWalkingButton.setImageResource(
+            if (viewState.walkingModeEnabled) R.drawable.ic_stop_24 else R.drawable.ic_start_24
+        )
     }
 
     private fun renderPreviewMode(viewState: HomeViewState) {
@@ -245,8 +243,6 @@ internal class HomeFragment @Inject constructor(
                 bottomSheetBehavior?.isDraggable = true
             }
         }
-        binding.homeBuildRouteButton.isVisible = !viewState.isPreviewMode
-        binding.homeMarkerButton.isVisible = !viewState.isPreviewMode
     }
 
     override fun consumeSideEffect(effect: SideEffect) = when (effect) {
@@ -258,6 +254,20 @@ internal class HomeFragment @Inject constructor(
         }
 
         is Error -> showSnackbar(effect.title.format(requireContext()).toString())
+
+        is Feedback -> {
+            FeedbackView.show(
+                requireContext(),
+                isReport = false,
+                object : FeedbackDialog.Callback {
+                    override fun onSubmit(rating: Int, comment: String) {
+                        viewModel.reportRouteFeedback(comment, rating)
+                    }
+
+                    override fun onCancel() = Unit
+                }
+            )
+        }
 
         else -> {}
     }

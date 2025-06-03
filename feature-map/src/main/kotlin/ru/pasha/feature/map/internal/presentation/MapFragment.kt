@@ -84,7 +84,9 @@ internal class MapFragment @Inject constructor(
                 centerMarker = Marker(this).apply {
                     position = mapCenter.point()
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                    icon = markerIcon
+                    icon = markerIcon.apply {
+                        this?.setTint(resources.getColor(R.color.walking_app_black))
+                    }
                 }
                 overlays.add(centerMarker)
             }

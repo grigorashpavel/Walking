@@ -11,6 +11,8 @@ import com.google.android.material.snackbar.Snackbar
 import ru.pasha.common.format
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.common.views.FeedbackDialog
+import ru.pasha.common.views.FeedbackView
 import ru.pasha.feature.settings.databinding.SettingsFragmentBinding
 import ru.pasha.feature.settings.internal.domain.SettingsEntity
 import javax.inject.Inject
@@ -47,6 +49,19 @@ internal class SettingsFragment @Inject constructor(
                     requireActivity().recreate()
                 },
                 changeLocationOptionCallback = viewModel::changeLocationOption,
+                feedbackCallback = {
+                    FeedbackView.show(
+                        requireContext(),
+                        isReport = true,
+                        object : FeedbackDialog.Callback {
+                            override fun onSubmit(rating: Int, comment: String) {
+                                viewModel.reportProblem(comment)
+                            }
+
+                            override fun onCancel() = Unit
+                        }
+                    )
+                }
             ).also { settingsAdapter = it }
             settingsRecyclerView.layoutManager = LinearLayoutManager(requireContext()).apply {
                 orientation = LinearLayoutManager.VERTICAL
@@ -90,6 +105,7 @@ internal class SettingsFragment @Inject constructor(
         SettingsEntity.Theme(current = theme),
         SettingsEntity.Language(current = language),
         SettingsEntity.LocationTracking(enabled = locationTrackingEnabled),
+        SettingsEntity.Feedback
     )
 
     private fun showSnackbar(message: String) {

@@ -25,6 +25,6 @@ internal interface SettingsModule {
     companion object {
         @Provides
         @SettingsScope
-        fun provideHistoryApi(apiFactory: ApiFactory): SettingsApi = apiFactory.create<SettingsApi>()
+        fun provideSettingsApi(apiFactory: ApiFactory): SettingsApi = apiFactory.create<SettingsApi>()
     }
 }

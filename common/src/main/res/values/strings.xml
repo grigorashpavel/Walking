@@ -66,4 +66,8 @@
     <string name="walking_app_roads_subtitle">Optimal routes through sidewalks and pedestrian-friendly areas</string>
 
     <string name="walking_app_listen_location">Listen Location</string>
+
+    <string name="walking_app_feedback">Feedback</string>
+    <string name="walking_app_feedback_report">Report Problem</string>
+    <string name="walking_app_feedback_report_hint">Describe Problem…</string>
 </resources>
