@@ -27,7 +27,7 @@ internal class MapControllerProvider @Inject constructor(
 
     var locationCallback: (Boolean) -> Unit = {}
 
-    var userLocation: GeoPoint? = null
+    private var userLocation: GeoPoint? = null
 
     override val route: Flow<Route?> = controllerFlow
         .distinctUntilChangedBy { it.route }

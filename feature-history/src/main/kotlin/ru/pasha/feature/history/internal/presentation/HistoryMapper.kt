@@ -2,6 +2,7 @@ package ru.pasha.feature.history.internal.presentation
 
 import ru.pasha.common.Text
 import ru.pasha.common.pattern.BaseMapper
+import ru.pasha.feature.history.R
 import ru.pasha.feature.history.internal.domain.PreviewEntity
 
 internal class HistoryMapper : BaseMapper<HistoryState, HistoryViewState>() {
@@ -45,7 +46,7 @@ internal class HistoryMapper : BaseMapper<HistoryState, HistoryViewState>() {
     private fun HistoryState.getError(): ViewError? = when (this) {
         HistoryState.Loading -> null
         is HistoryState.Error -> ViewError(
-            message = message ?: Text.Constant("Возникла ошиба при загрузке")
+            message = message ?: Text.Resource(ru.pasha.common.R.string.walking_app_download_error)
         )
 
         is HistoryState.Success -> null

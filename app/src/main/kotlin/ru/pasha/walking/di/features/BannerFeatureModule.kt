@@ -31,7 +31,6 @@ interface BannerFeatureModule {
 
         @Provides
         fun provideBannerNavigationProvider(
-            connectionProvider: ConnectionProvider,
             homeFeature: HomeFeature,
             router: Router,
         ): BannerNavigationProvider =

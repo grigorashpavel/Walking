@@ -56,4 +56,5 @@ dependencies {
     implementation(projects.featureMap)
     implementation(projects.featureHome)
     implementation(projects.featureHistory)
+    implementation(projects.featureSettings)
 }

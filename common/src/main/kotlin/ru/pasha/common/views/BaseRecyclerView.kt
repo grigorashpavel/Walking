@@ -46,7 +46,9 @@ abstract class BaseRecyclerAdapter<B : ViewBinding, T>(
         }
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder<B, T>, position: Int) = Unit
+    override fun onBindViewHolder(holder: BaseViewHolder<B, T>, position: Int) {
+        holder.bind(items[position], position)
+    }
 
     override fun onBindViewHolder(
         holder: BaseViewHolder<B, T>,

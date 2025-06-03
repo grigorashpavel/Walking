@@ -22,6 +22,7 @@ internal class HomeMapper(
             walkingModeEnabled = state.walkingModeEnabled,
             isWalkingButtonVisible = state.route != null,
             isPreviewMode = state.previewModeEnabled,
+            isLocationButtonVisible = state.locationTrackingEnabled,
         )
     }
 

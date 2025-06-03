@@ -21,4 +21,49 @@
     <string name="walking_app_max_pois_limit_exeeded">POI limit reached</string>
 
     <string name="walking_app_possible_poi_not_fetched">No suitable POIs found - try again later</string>
+
+    <string name="walking_app_download_error">Download Error</string>
+
+    <string name="walking_app_delete_error">Remove Error</string>
+
+    <string name="walking_app_route_open_error">Can`t open route</string>
+
+    <string name="walking_app_routes_history_title">Routes History</string>
+
+    <string name="walking_app_routes_history_reload">Reload</string>
+
+    <string name="walking_app_routes_history_load_more">Load More</string>
+
+    <string name="walking_app_routes_poi_redacted_title">Your point was adjusted</string>
+    <string name="walking_app_routes_poi_redacted_subtitle">Currently routing through intersections only</string>
+
+    <string name="walking_app_poi_num">POI %s</string>
+
+    <string name="walking_app_categories_user">User</string>
+    <string name="walking_app_categories_default">Default</string>
+
+    <string name="walking_app_rate_route">Rate Route</string>
+    <string name="walking_app_your_comment">Your comment…</string>
+    <string name="walking_app_your_comment_cancel">Cancel</string>
+    <string name="walking_app_your_comment_send">Send</string>
+
+    <string name="walking_app_route_length">Route length: %s m.</string>
+
+    <string name="walking_app_settings">Settings</string>
+
+    <string name="walking_app_start">Start</string>
+
+    <string name="walking_app_default_mode_title">Standard Mode</string>
+    <string name="walking_app_default_mode_subtitle">Smart routes blending best features from all categories:\n• Mix of green areas and urban zones\n• Pedestrian-friendly paths\n• Popular landmarks included\n• Optimal timing\n\nAuto-adjusts to your location and time of day using community insights.\n\nBuilt by walkers, for walkers</string>
+
+    <string name="walking_app_nature_title">Nature</string>
+    <string name="walking_app_nature_subtitle">Green routes through city parks, forests, and urban green spaces</string>
+
+    <string name="walking_app_resedentials_title">Architecture</string>
+    <string name="walking_app_resedentials_subtitle">Discover historic buildings, modern landmarks, and unique urban structures</string>
+
+    <string name="walking_app_roads_title">Walking Paths</string>
+    <string name="walking_app_roads_subtitle">Optimal routes through sidewalks and pedestrian-friendly areas</string>
+
+    <string name="walking_app_listen_location">Listen Location</string>
 </resources>

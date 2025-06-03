@@ -3,7 +3,9 @@ package ru.pasha.walking.di
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Resources
 import android.provider.Settings
+import androidx.core.os.ConfigurationCompat
 import androidx.fragment.app.FragmentFactory
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -20,7 +22,10 @@ import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.MapController
 import ru.pasha.core.navigation.ScreenFactory
 import ru.pasha.feature.banner.api.BannerFeature
+import ru.pasha.feature.home.api.HomeArguments
+import ru.pasha.feature.home.api.HomeFeature
 import ru.pasha.feature.map.api.MapFeature
+import ru.pasha.feature.settings.api.SettingsManager
 import ru.pasha.network.api.ApiFactory
 import ru.pasha.network.api.AuthController
 import ru.pasha.network.api.ConnectionTracker
@@ -31,12 +36,18 @@ import ru.pasha.walking.auth.AuthControllerImpl
 import ru.pasha.walking.auth.AuthManager
 import ru.pasha.walking.auth.AuthManagerImpl
 import ru.pasha.walking.auth.EncryptedSessionStorage
+import ru.pasha.walking.auth.ExitNavigationProvider
 import ru.pasha.walking.auth.SessionStorage
+import java.util.Locale
 
 @Module
 interface ApplicationModule {
 
     companion object {
+        @Provides
+        @ApplicationScope
+        fun provideSettingsManager(context: Context): SettingsManager = SettingsManager(context)
+
         @Provides
         @ApplicationScope
         fun provideConnectionTracker(context: Context): ConnectionTracker =
@@ -51,9 +62,34 @@ interface ApplicationModule {
         fun provideRouter(cicerone: Cicerone<Router>): Router = cicerone.router
 
         @Provides
+        @ApplicationScope
+        fun provideExitNavigation(
+            bannerFeature: BannerFeature,
+            router: Router,
+        ): ExitNavigationProvider {
+            return object : ExitNavigationProvider {
+                override fun exit() {
+                    router.newRootChain(bannerFeature.getBannerScreen())
+                }
+            }
+        }
+
+        @Provides
         @StartScreen
         @ApplicationScope
-        fun provideStartScreen(feature: BannerFeature): Screen = feature.getBannerScreen()
+        fun provideStartScreen(
+            feature: BannerFeature,
+            homeFeature: HomeFeature,
+            authController: AuthController,
+        ): Screen {
+            return if (authController.getSessionKey() != null) {
+                homeFeature.getHomeScreen(
+                    HomeArguments(route = null)
+                )
+            } else {
+                feature.getBannerScreen()
+            }
+        }
 
         @SuppressLint("HardwareIds")
         @Provides
@@ -69,7 +105,8 @@ interface ApplicationModule {
                 context.packageManager.getPackageInfo(context.packageName, 0).versionName
             },
             localeProvider = {
-                context.resources.configuration.locales[0].language
+                ConfigurationCompat.getLocales(Resources.getSystem().configuration)[0]
+                    ?.language?.take(2) ?: Locale.getDefault().language.take(2)
             },
             authController = authController,
         )

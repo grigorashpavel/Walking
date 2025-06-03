@@ -11,6 +11,7 @@ internal data class HomeState(
     val route: Route?,
     val markers: List<Marker>,
     val isLoading: Boolean,
+    val locationTrackingEnabled: Boolean,
 )
 
 internal enum class Category {

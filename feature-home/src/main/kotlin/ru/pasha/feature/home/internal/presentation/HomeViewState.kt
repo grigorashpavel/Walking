@@ -11,4 +11,5 @@ internal data class HomeViewState(
     val walkingModeEnabled: Boolean,
     val isWalkingButtonVisible: Boolean,
     val isPreviewMode: Boolean,
+    val isLocationButtonVisible: Boolean,
 )

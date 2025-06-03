@@ -2,7 +2,6 @@
 
 package ru.pasha.walking.auth
 
-import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -17,7 +16,7 @@ import javax.inject.Inject
 class AuthControllerImpl @Inject constructor(
     private val authManager: AuthManager,
     private val sessionStorage: SessionStorage,
-    private val router: Router,
+    private val exitNavigationProvider: ExitNavigationProvider,
     private val sessionApi: SessionApi,
 ) : AuthController {
 
@@ -58,6 +57,10 @@ class AuthControllerImpl @Inject constructor(
 
     override fun logout() {
         sessionStorage.clearSession()
-        router.exit()
+        exitNavigationProvider.exit()
     }
+}
+
+interface ExitNavigationProvider {
+    fun exit()
 }

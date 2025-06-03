@@ -113,7 +113,7 @@ internal class HistoryViewModel @AssistedInject constructor(
             } else {
                 sideEffect {
                     DownloadError(
-                        Text.Constant("Ошибка загрузки ${previewEntity.name}")
+                        Text.Resource(ru.pasha.common.R.string.walking_app_download_error)
                     )
                 }
             }
@@ -129,7 +129,7 @@ internal class HistoryViewModel @AssistedInject constructor(
             if (res == null) {
                 sideEffect {
                     DownloadError(
-                        Text.Constant("Ошибка удаления ${previewEntity.name}")
+                        Text.Resource(ru.pasha.common.R.string.walking_app_delete_error)
                     )
                 }
             } else {
@@ -149,7 +149,7 @@ internal class HistoryViewModel @AssistedInject constructor(
                 navigationProvider.navigateToPreview(target)
             } else {
                 sideEffect {
-                    DownloadError(Text.Constant("Не удалось открыть маршрут"))
+                    DownloadError(Text.Resource(ru.pasha.common.R.string.walking_app_route_open_error))
                 }
             }
         }

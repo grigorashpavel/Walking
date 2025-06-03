@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.parcelize.Parcelize
 import ru.pasha.common.Text
+import ru.pasha.common.format
 import ru.pasha.common.map.Marker
 import ru.pasha.common.map.Route
+import ru.pasha.feature.home.R
 import ru.pasha.feature.home.databinding.HomeBottomSheetViewBinding
 import ru.pasha.feature.home.internal.presentation.MarkersAdapter
 import ru.pasha.feature.home.internal.presentation.PreviewMarkersAdapter
@@ -34,6 +36,7 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
     private var removeMarkerCallback: (Marker) -> Unit = {}
 
     private var navigateToHistory: () -> Unit = {}
+    private var navigateToSettings: () -> Unit = {}
 
     init {
         binding.homeMarkersPreviewRecyclerView.adapter =
@@ -55,6 +58,7 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
             navigateToHistory()
         }
         binding.homeMenuSettingsItem.setOnClickListener {
+            navigateToSettings()
         }
     }
 
@@ -62,10 +66,12 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         onRemoveMarkers: () -> Unit,
         onRemoveMarker: (Marker) -> Unit,
         navigateToHistory: () -> Unit,
+        navigateToSettings: () -> Unit,
     ) {
         removeAllCallback = onRemoveMarkers
         removeMarkerCallback = onRemoveMarker
         this.navigateToHistory = navigateToHistory
+        this.navigateToSettings = navigateToSettings
     }
 
     fun render(state: State) {
@@ -84,13 +90,15 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         binding.homeRouteTimerText.isVisible = state.inRouteTime != null
 
         if (state.route != null) {
-            binding.homeRouteLengthTitle.setText(
-                "Длинна маршрута: ${String.format("%.2f", state.route.length)} м."
-            )
+            val len = String.format("%.2f", state.route.length)
+            binding.homeRouteLengthTitle.text = Text.Resource(ru.pasha.common.R.string.walking_app_route_length)
+                .format(context)
+                .toString()
+                .format(len)
             binding.homeRouteLengthTitle.isVisible = true
         } else {
             binding.homeRouteLengthTitle.isVisible = false
-            binding.homeRouteLengthTitle.setText("")
+            binding.homeRouteLengthTitle.text = ""
         }
 
         binding.homeMenuHistoryItem.isVisible = state.isMenuVisible

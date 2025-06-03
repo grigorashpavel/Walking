@@ -8,9 +8,7 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import kotlinx.coroutines.flow.Flow
 import ru.pasha.common.di.findDependency
-import ru.pasha.common.extensions.isNightMode
 import ru.pasha.core.navigation.BaseNavigationActivity
 import ru.pasha.core.navigation.NavigationHolder
 import ru.pasha.feature.banner.api.BannerUiDependencies
@@ -50,6 +48,8 @@ class MainActivity : BaseNavigationActivity(), BannerUiDependencies {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (applicationContext as WalkingApp).settingsManager.applySettings()
+
         DaggerActivityComponent.factory()
             .create(this)
             .inject(this)
@@ -57,7 +57,6 @@ class MainActivity : BaseNavigationActivity(), BannerUiDependencies {
         authManager.registerLauncher(this)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        setupWalkingAppTheme()
         supportFragmentManager.fragmentFactory = fragmentFactory
 
         super.onCreate(savedInstanceState)
@@ -68,16 +67,7 @@ class MainActivity : BaseNavigationActivity(), BannerUiDependencies {
         }
     }
 
-    private fun setupWalkingAppTheme() {
-        val theme = if (isNightMode()) {
-            ru.pasha.common.R.style.Base_Theme_Walking_Night
-        } else {
-            ru.pasha.common.R.style.Base_Theme_Walking_Light
-        }
-        setTheme(theme)
-    }
-
-    override val navigateToAuthAction: suspend () -> Flow<Boolean> get() = {
-        authManager.launchAuthScreen()
+    override val navigateToAuthAction: suspend () -> Boolean get() = {
+        (applicationContext as WalkingApp).authController.refreshSession()
     }
 }

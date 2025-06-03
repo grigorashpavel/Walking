@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
+import ru.pasha.common.Text
+import ru.pasha.common.format
 import ru.pasha.feature.home.R
 import ru.pasha.feature.home.databinding.CategoriesWidgetBinding
 import ru.pasha.feature.home.databinding.TabUserCategoriesBinding
@@ -26,13 +28,6 @@ class CategoriesWidgetView @JvmOverloads constructor(
 
     private val tabListener = object : OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
-            if (tab != null) {
-                tab.text = when (binding.homeCategoryPager.adapter?.getItemViewType(tab.position)) {
-                    R.layout.tab_user_categories -> "Ваши настройки"
-                    R.layout.tab_default_category -> "Стандартный"
-                    else -> ""
-                }
-            }
             val state = if (tab?.position == 0) State.User(null) else State.Default
             stateListener?.invoke(state)
         }
@@ -83,8 +78,8 @@ class CategoriesWidgetView @JvmOverloads constructor(
             false
         ) { tab, position ->
             tab.text = when (position) {
-                0 -> "Ваши настройки"
-                1 -> "Стандартный"
+                0 -> Text.Resource(ru.pasha.common.R.string.walking_app_categories_user).format(context)
+                1 -> Text.Resource(ru.pasha.common.R.string.walking_app_categories_default).format(context)
                 else -> ""
             }
         }.attach()

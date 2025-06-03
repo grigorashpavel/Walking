@@ -23,7 +23,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:text="Стандартный режим"
+            android:text="@string/walking_app_default_mode_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -35,7 +35,7 @@
             android:ellipsize="end"
             android:textAlignment="viewStart"
             android:gravity="center_horizontal"
-            android:text="Универсальный маршрут, сочетающий лучшие практики всех категорий:\n• Баланс природных и городских зон\n• Учёт удобства пешеходных дорожек\n• Популярные достопримечательности\n• Оптимальное время перемещения\nАвтоматически адаптируется под ваше местоположение и время дня, используя коллективный опыт пользователей.\n\nСоздан людьми для людей"
+            android:text="@string/walking_app_default_mode_subtitle"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -97,7 +97,6 @@ internal class MapFragment @Inject constructor(
         initMapListener()
     }
 
-    // Рендер можно использовать только для свойств настроек (видимость маркеров и тд, не центр и зум)
     override fun render(viewState: MapViewState) {
         renderCenteredMarker(viewState)
         renderLocation(viewState)

@@ -98,6 +98,8 @@ internal class HomeFragment @Inject constructor(
         }
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.onViewCreated()
+
         renderShimmer()
         setupCategoriesListener()
         setupButtonsListeners()
@@ -105,6 +107,7 @@ internal class HomeFragment @Inject constructor(
             onRemoveMarkers = viewModel::removeMarkers,
             onRemoveMarker = viewModel::removeMarker,
             navigateToHistory = viewModel::navigateToHistory,
+            navigateToSettings = viewModel::navigateToSettings,
         )
     }
 
@@ -229,6 +232,7 @@ internal class HomeFragment @Inject constructor(
         val needShow = !viewState.walkingModeEnabled && !viewState.isPreviewMode
         binding.homeMarkerButton.isVisible = needShow
         binding.homeBuildRouteButton.isVisible = needShow
+        binding.homeLocationButton.isVisible = viewState.isLocationButtonVisible
     }
 
     private fun renderPreviewMode(viewState: HomeViewState) {

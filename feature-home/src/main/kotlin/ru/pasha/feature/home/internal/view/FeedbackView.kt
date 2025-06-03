@@ -16,8 +16,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import ru.pasha.common.Text
 import ru.pasha.common.extensions.dpToPx
 import ru.pasha.common.extensions.dpToPxF
+import ru.pasha.common.format
 import ru.pasha.feature.home.R
 
 class FeedbackView @JvmOverloads constructor(
@@ -59,7 +61,7 @@ class FeedbackView @JvmOverloads constructor(
 
     private fun setupView() {
         TextView(context).apply {
-            text = "Оцените маршрут"
+            text = Text.Resource(ru.pasha.common.R.string.walking_app_rate_route).format(context)
             setTextColor(Color.parseColor("#2D3748"))
             textSize = 20f
             gravity = Gravity.CENTER
@@ -83,7 +85,7 @@ class FeedbackView @JvmOverloads constructor(
         }
 
         etComment = EditText(context).apply {
-            hint = "Ваш комментарий..."
+            hint = Text.Resource(ru.pasha.common.R.string.walking_app_your_comment).format(context)
             background = createInputBackground()
             setPadding(16.dpToPx, 12.dpToPx, 16.dpToPx, 12.dpToPx)
             gravity = Gravity.TOP
@@ -101,7 +103,8 @@ class FeedbackView @JvmOverloads constructor(
         addView(buttonContainer, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
 
         Button(context).apply {
-            text = "Отмена"
+            text = Text.Resource(ru.pasha.common.R.string.walking_app_your_comment_cancel)
+                .format(context)
             setTextColor(Color.parseColor("#4A5568"))
             background = null
             setOnClickListener { listener?.onCancel() }
@@ -109,7 +112,8 @@ class FeedbackView @JvmOverloads constructor(
         }
 
         Button(context).apply {
-            text = "Отправить"
+            text = Text.Resource(ru.pasha.common.R.string.walking_app_your_comment_send)
+                .format(context)
             setTextColor(Color.WHITE)
             background = createSubmitButtonBackground()
             setOnClickListener { handleSubmit() }

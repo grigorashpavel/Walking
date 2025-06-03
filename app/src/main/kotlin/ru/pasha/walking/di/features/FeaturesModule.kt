@@ -8,12 +8,14 @@ import ru.pasha.feature.banner.api.BannerFeature
 import ru.pasha.feature.history.api.HistoryFeature
 import ru.pasha.feature.home.api.HomeFeature
 import ru.pasha.feature.map.api.MapFeature
+import ru.pasha.feature.settings.api.SettingsFeature
 
 @Module(includes = [
     BannerFeatureModule::class,
     MapFeatureModule::class,
     HomeFeatureModule::class,
-    HistoryFeatureModule::class]
+    HistoryFeatureModule::class,
+    SettingsFeatureModule::class]
 )
 interface FeaturesModule {
     @Binds
@@ -31,4 +33,8 @@ interface FeaturesModule {
     @Binds
     @IntoSet
     fun bindHistoryFeature(feature: HistoryFeature): FragmentInstantiator
+
+    @Binds
+    @IntoSet
+    fun bindSettingsFeature(feature: SettingsFeature): FragmentInstantiator
 }

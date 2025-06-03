@@ -13,8 +13,10 @@ import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.Marker
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.feature.home.R
 import ru.pasha.feature.home.api.HomeArguments
 import ru.pasha.feature.home.api.HomeNavigationProvider
+import ru.pasha.feature.home.api.LocationTrackerSettingProvider
 import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 
 internal class HomeViewModel @AssistedInject constructor(
@@ -22,6 +24,7 @@ internal class HomeViewModel @AssistedInject constructor(
     private val navigationProvider: HomeNavigationProvider,
     @Assisted
     private val homeArguments: HomeArguments,
+    private val locationTrackerSettingProvider: LocationTrackerSettingProvider,
 ) : BaseViewModel<HomeState, HomeViewState>(
     mapper = HomeMapper(walkingMapProvider.mapController::isReachedMaxMarkers),
     initialState = HomeState(
@@ -32,6 +35,7 @@ internal class HomeViewModel @AssistedInject constructor(
         walkingModeEnabled = false,
         route = homeArguments.route,
         previewModeEnabled = homeArguments.route != null,
+        locationTrackingEnabled = false
     ),
 ) {
     private var isFirstPoint = true
@@ -45,8 +49,8 @@ internal class HomeViewModel @AssistedInject constructor(
                     isFirstPoint = false
                     sideEffect {
                         FirstPoi(
-                            title = Text.Constant("Отредактировали вашу точку"),
-                            subtitle = Text.Constant("Пока что строим только через перекрестки"),
+                            title = Text.Resource(ru.pasha.common.R.string.walking_app_routes_poi_redacted_title),
+                            subtitle = Text.Resource(ru.pasha.common.R.string.walking_app_routes_poi_redacted_subtitle),
                         )
                     }
                 }
@@ -66,13 +70,26 @@ internal class HomeViewModel @AssistedInject constructor(
             .launchIn(viewModelScope)
     }
 
+    fun onViewCreated() {
+        updateState {
+            copy(locationTrackingEnabled = locationTrackerSettingProvider.isEnabled)
+        }
+    }
+
     fun navigateToHistory() {
         navigationProvider.navigateToHistory()
     }
 
+    fun navigateToSettings() {
+        navigationProvider.navigateToSettings()
+    }
+
     fun toggleWalkingMode() {
+        val canTrackLocation = state.locationTrackingEnabled
         updateState {
-            switchLocation(!walkingModeEnabled)
+            if (canTrackLocation) {
+                switchLocation(!walkingModeEnabled)
+            }
             walkingMapProvider.mapController.setWalkingMode(!walkingModeEnabled)
             copy(walkingModeEnabled = !walkingModeEnabled)
         }

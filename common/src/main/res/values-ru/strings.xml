@@ -21,4 +21,49 @@
     <string name="walking_app_max_pois_limit_exeeded">Вы достигли максимум точек интереса</string>
 
     <string name="walking_app_possible_poi_not_fetched">Не смогли найти подходящую точку – попробуйте позже</string>
+
+    <string name="walking_app_download_error">Ошибка загрузки</string>
+
+    <string name="walking_app_delete_error">Ошибка удаления</string>
+
+    <string name="walking_app_route_open_error">Не удалось открыть маршрут</string>
+
+    <string name="walking_app_routes_history_title">История Маршрутов</string>
+
+    <string name="walking_app_routes_history_reload">Обновить</string>
+
+    <string name="walking_app_routes_history_load_more">Загрузить больше</string>
+
+    <string name="walking_app_routes_poi_redacted_title">Отредактировали вашу точку</string>
+    <string name="walking_app_routes_poi_redacted_subtitle">Пока что строим только через перекрестки</string>
+
+    <string name="walking_app_poi_num">Точка интереса %s</string>
+
+    <string name="walking_app_categories_user">Пользовательский</string>
+    <string name="walking_app_categories_default">Стандартный</string>
+
+    <string name="walking_app_rate_route">Оцените маршрут</string>
+    <string name="walking_app_your_comment">Ваш комментарий…</string>
+    <string name="walking_app_your_comment_cancel">Отмена</string>
+    <string name="walking_app_your_comment_send">Отправить</string>
+
+    <string name="walking_app_route_length">Длинна маршрута: %s м.</string>
+
+    <string name="walking_app_settings">Настройки</string>
+
+    <string name="walking_app_start">Начать</string>
+
+    <string name="walking_app_default_mode_title">Стандартный режим</string>
+    <string name="walking_app_default_mode_subtitle">Универсальный маршрут, сочетающий лучшие практики всех категорий:\n• Баланс природных и городских зон\n• Учёт удобства пешеходных дорожек\n• Популярные достопримечательности\n• Оптимальное время перемещения\nАвтоматически адаптируется под ваше местоположение и время дня, используя коллективный опыт пользователей.\n\nСоздан людьми для людей</string>
+    
+    <string name="walking_app_nature_title">Природа</string>
+    <string name="walking_app_nature_subtitle">Маршруты через парки, лесные массивы и зеленые зоны в черте города</string>
+
+    <string name="walking_app_resedentials_title">Архитектура и постройки</string>
+    <string name="walking_app_resedentials_subtitle">Исторические здания, современная архитектура и уникальные городские объекты</string>
+
+    <string name="walking_app_roads_title">Пешие зоны</string>
+    <string name="walking_app_roads_subtitle">Оптимальные пешеходные маршруты по тротуарам и пешеходным зонам</string>
+
+    <string name="walking_app_listen_location">Отслеживать местоположение</string>
 </resources>

@@ -7,8 +7,6 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.pasha.common.ScaleType
@@ -25,7 +23,7 @@ internal class BannerViewModel @AssistedInject constructor(
     private val connectionProvider: ConnectionProvider,
     private val navigationProvider: BannerNavigationProvider,
     @Assisted
-    private val authAction: suspend () -> Flow<Boolean>
+    private val authAction: suspend () -> Boolean
 ) : BaseViewModel<BannerState, BannerViewState>(
     mapper = BannerMapper(),
     initialState = BannerState.Loading
@@ -37,7 +35,7 @@ internal class BannerViewModel @AssistedInject constructor(
     private fun loadBanners() {
         viewModelScope.launch {
             val banners = withContext(Dispatchers.IO) {
-                delay(1000)
+                delay(500)
 
                 listOf(
                     BannerEntity(
@@ -87,7 +85,7 @@ internal class BannerViewModel @AssistedInject constructor(
         }
 
         navJob = viewModelScope.launch {
-            val authed = authAction().first()
+            val authed = authAction()
             if (authed) navigateToHome()
         }
     }
@@ -101,7 +99,7 @@ internal class BannerViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(authAction: suspend () -> Flow<Boolean>): BannerViewModel
+        fun create(authAction: suspend () -> Boolean): BannerViewModel
     }
 }
 

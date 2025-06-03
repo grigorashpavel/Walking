@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="16dp"
         android:layout_marginStart="16dp"
-        android:text="История маршрутов"
+        android:text="@string/walking_app_routes_history_title"
         android:textColor="?attr/walking_app_color_default_900"
         app:layout_constraintStart_toEndOf="@id/backButton"
         app:layout_constraintTop_toTopOf="parent" />
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:backgroundTint="@android:color/transparent"
-        android:text="Обновить"
+        android:text="@string/walking_app_routes_history_reload"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
