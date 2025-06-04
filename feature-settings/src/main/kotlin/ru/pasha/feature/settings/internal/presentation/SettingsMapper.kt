@@ -9,6 +9,7 @@ internal class SettingsMapper : BaseMapper<SettingsState, SettingsViewState>() {
             language = state.language,
             locationTrackingEnabled = state.locationTracking.value,
             error = null,
+            stepsTrackingEnabled = state.stepsTracking.value,
         )
     }
 }

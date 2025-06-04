@@ -32,6 +32,13 @@ internal class MapViewModel @AssistedInject constructor(
                 stopLocationTracking()
             }
         }
+        mapControllerProvider.stepsCallback = { enabled ->
+            if (enabled) {
+                checkStepsPermission()
+            } else {
+                stopListenSteps()
+            }
+        }
     }
 
     private fun checkLocationPermissions() {
@@ -44,6 +51,24 @@ internal class MapViewModel @AssistedInject constructor(
         }
     }
 
+    private fun checkStepsPermission() {
+        if (!permissionManager.hasStepsPermissions()) {
+            sideEffect {
+                MapSideEffect.RequestStepsPermission
+            }
+        } else {
+            startListenSteps()
+        }
+    }
+
+    private fun startListenSteps() {
+        sideEffect { MapSideEffect.StartListenSteps }
+    }
+
+    private fun stopListenSteps() {
+        sideEffect { MapSideEffect.StopListenSteps }
+    }
+
     private fun startLocationTracking() {
         sideEffect { MapSideEffect.StartListenLocation }
     }
@@ -52,9 +77,15 @@ internal class MapViewModel @AssistedInject constructor(
         sideEffect { MapSideEffect.StopListenLocation }
     }
 
-    fun handlePermissionResult(granted: Boolean) {
+    fun handleLocationPermissionResult(granted: Boolean) {
         if (granted) {
             startLocationTracking()
+        }
+    }
+
+    fun handleStepsPermissionResult(granted: Boolean) {
+        if (granted) {
+            startListenSteps()
         }
     }
 
@@ -68,4 +99,7 @@ sealed class MapSideEffect : SideEffect {
     data object RequestLocationPermission : MapSideEffect()
     data object StartListenLocation : MapSideEffect()
     data object StopListenLocation : MapSideEffect()
+    data object RequestStepsPermission : MapSideEffect()
+    data object StartListenSteps : MapSideEffect()
+    data object StopListenSteps : MapSideEffect()
 }

@@ -9,7 +9,7 @@
         android:id="@+id/icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/ic_route_24"
+        android:src="@drawable/ic_steps_24"
         android:tint="?attr/walking_app_color_default_900"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

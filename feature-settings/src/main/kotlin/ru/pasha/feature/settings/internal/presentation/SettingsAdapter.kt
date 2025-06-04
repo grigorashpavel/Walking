@@ -14,12 +14,14 @@ import ru.pasha.feature.settings.databinding.SettingsItemBinding
 import ru.pasha.feature.settings.internal.domain.Language
 import ru.pasha.feature.settings.internal.domain.LocationTracking
 import ru.pasha.feature.settings.internal.domain.SettingsEntity
+import ru.pasha.feature.settings.internal.domain.StepsTracking
 import ru.pasha.feature.settings.internal.domain.Theme
 
 internal class SettingsAdapter(
     private val changeLanguageCallback: (Language) -> Unit,
     private val changeThemeCallback: (Theme) -> Unit,
     private val changeLocationOptionCallback: (LocationTracking) -> Unit,
+    private val changeStepsOptionCallback: (StepsTracking) -> Unit,
     private val feedbackCallback: () -> Unit,
 ) : BaseRecyclerAdapter<SettingsItemBinding, SettingsEntity>(
     inflateBinding = { inflater, parent, attach ->
@@ -116,6 +118,20 @@ internal class SettingsAdapter(
                 }
             }
             Unit
+        }
+
+        is SettingsEntity.StepsTracking -> with(this) {
+            spinner.isVisible = false
+
+            settingsTitle.setText(Text.Resource(ru.pasha.common.R.string.walking_app_listen_steps))
+            icon.setImageResource(ru.pasha.common.R.drawable.ic_steps_24)
+
+            itemSwitch.isChecked = item.enabled
+            itemSwitch.setOnCheckedChangeListener { _, isChecked ->
+                changeStepsOptionCallback(
+                    if (isChecked) StepsTracking.ENABLED else StepsTracking.DISABLED
+                )
+            }
         }
 
         SettingsEntity.Feedback -> with(this) {

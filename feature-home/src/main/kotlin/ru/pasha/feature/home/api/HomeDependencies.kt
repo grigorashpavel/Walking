@@ -1,17 +1,20 @@
 package ru.pasha.feature.home.api
 
+import android.content.Context
 import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.network.api.ApiFactory
 
 interface HomeDependencies {
     val mapProvider: WalkingMapProvider
     val homeNavigationProvider: HomeNavigationProvider
-    val locationTrackerSettingProvider: LocationTrackerSettingProvider
+    val settingsProvider: SettingsProvider
     val apiFactory: ApiFactory
+    val context: Context
 }
 
-interface LocationTrackerSettingProvider {
-    val isEnabled: Boolean
+interface SettingsProvider {
+    val locationTrackingEnabled: Boolean
+    val stepsTrackingEnabled: Boolean
 }
 
 interface HomeNavigationProvider {

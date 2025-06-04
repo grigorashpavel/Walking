@@ -15,5 +15,9 @@ internal sealed interface SettingsEntity {
         val enabled: Boolean,
     ) : SettingsEntity
 
+    data class StepsTracking(
+        val enabled: Boolean,
+    ) : SettingsEntity
+
     data object Feedback : SettingsEntity
 }

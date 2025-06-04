@@ -75,4 +75,9 @@
     <string name="walking_app_route_name_hint">Введите название</string>
     <string name="walking_app_route_name_error">Длина названия должна быть от 5 до 45 символов</string>
     <string name="walking_app_route_not_named">Для построения маршрута нужно название</string>
+
+    <string name="walking_app_steps_count">Шагов: %s</string>
+    <string name="walking_app_listen_steps">Отслеживать шаги</string>
+
+    <string name="walking_app_timer">В пути: %s ч. %s м. %s с.</string>
 </resources>

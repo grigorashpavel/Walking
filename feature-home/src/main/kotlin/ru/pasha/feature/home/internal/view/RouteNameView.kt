@@ -44,6 +44,8 @@ class RouteNameDialog : DialogFragment() {
 
     var callback: Callback? = null
 
+    var correct = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,13 +55,16 @@ class RouteNameDialog : DialogFragment() {
         feedbackView = RouteNameView(requireContext()).apply {
             setListener(object : RouteNameView.Listener {
                 override fun onSubmit(name: String) {
+                    correct = true
                     callback?.onSubmit(name)
                     dismiss()
                 }
 
                 override fun onCancel() {
-                    callback?.onCancel()
-                    dismiss()
+                    if (!correct) {
+                        callback?.onCancel()
+                        dismiss()
+                    }
                 }
             })
         }
@@ -67,7 +72,7 @@ class RouteNameDialog : DialogFragment() {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        callback?.onCancel()
+        if (!correct) callback?.onCancel()
         super.onDismiss(dialog)
     }
 

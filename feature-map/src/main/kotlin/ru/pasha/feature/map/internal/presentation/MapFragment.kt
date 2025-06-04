@@ -11,6 +11,11 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -25,6 +30,7 @@ import ru.pasha.common.R
 import ru.pasha.common.map.GeoPoint
 import ru.pasha.common.pattern.BaseFragment
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.feature.map.api.MapUiDependencies
 import ru.pasha.feature.map.databinding.MapFragmentBinding
 import ru.pasha.feature.map.internal.MapControllerProvider
 import ru.pasha.feature.map.internal.entity
@@ -50,9 +56,15 @@ internal class MapFragment @Inject constructor(
 
     private var route: Polyline? = null
 
-    private val location get() = binding.walkingMap.mapCenter.point()
+    private val mapCenter get() = binding.walkingMap.mapCenter.point()
 
-    private var permissionLauncher: ActivityResultLauncher<Void?>? = null
+    private var locationPermissionLauncher: ActivityResultLauncher<Void?>? = null
+    private var stepsPermissionLauncher: ActivityResultLauncher<Void?>? = null
+
+    private var stepsListenJob: Job? = null
+    private val stepsFlow by lazy {
+        (requireActivity() as MapUiDependencies).stepsFlow
+    }
 
     private var locationOverlay: MyLocationNewOverlay? = null
 
@@ -68,9 +80,14 @@ internal class MapFragment @Inject constructor(
             isMapViewHardwareAccelerated = true
         }
 
-        permissionLauncher = permissionManager.registerPermissionLauncher(this) { granted ->
-            viewModel.handlePermissionResult(granted)
-        }
+        locationPermissionLauncher = permissionManager
+            .registerLocationPermissionLauncher(this) { granted ->
+                viewModel.handleLocationPermissionResult(granted)
+            }
+        stepsPermissionLauncher = permissionManager
+            .registerStepsPermissionLauncher(this) { granted ->
+                viewModel.handleStepsPermissionResult(granted)
+            }
     }
 
     override fun getViewBinding(
@@ -112,7 +129,7 @@ internal class MapFragment @Inject constructor(
 
     override fun consumeSideEffect(effect: SideEffect) = when (effect) {
         is MapSideEffect.RequestLocationPermission -> {
-            permissionLauncher?.launch(null) ?: Unit
+            locationPermissionLauncher?.launch(null) ?: Unit
         }
 
         is MapSideEffect.StartListenLocation -> {
@@ -121,6 +138,23 @@ internal class MapFragment @Inject constructor(
         }
 
         is MapSideEffect.StopListenLocation -> disableLication()
+
+        is MapSideEffect.RequestStepsPermission -> {
+            stepsPermissionLauncher?.launch(null) ?: Unit
+        }
+
+        is MapSideEffect.StartListenSteps -> {
+            stepsListenJob?.cancel()
+            stepsListenJob = lifecycleScope.launch {
+                stepsFlow
+                    .onEach { mapControllerProvider.updateSteps(it) }
+                    .launchIn(lifecycleScope)
+            }
+        }
+
+        is MapSideEffect.StopListenSteps -> {
+            stepsListenJob?.cancel() ?: Unit
+        }
 
         else -> Unit
     }
@@ -246,15 +280,15 @@ internal class MapFragment @Inject constructor(
     private fun initMapListener() {
         mapListener = object : MapListener {
             override fun onScroll(event: ScrollEvent?): Boolean {
-                mapControllerProvider.setCurrentLocation(location.entity())
-                centerMarker?.position = location
+                mapControllerProvider.setCurrentLocation(mapCenter.entity())
+                centerMarker?.position = mapCenter
                 return false
             }
 
             override fun onZoom(event: ZoomEvent?): Boolean {
-                mapControllerProvider.setCurrentLocation(location.entity())
+                mapControllerProvider.setCurrentLocation(mapCenter.entity())
                 event?.zoomLevel?.let(mapControllerProvider::setZoom)
-                centerMarker?.position = location
+                centerMarker?.position = mapCenter
                 return false
             }
         }.also(binding.walkingMap::addMapListener)

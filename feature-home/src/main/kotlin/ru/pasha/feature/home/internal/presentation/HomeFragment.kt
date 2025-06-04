@@ -154,6 +154,7 @@ internal class HomeFragment @Inject constructor(
         }
         binding.homeBackButton.setOnClickListener {
             viewModel.tryShowFeedback()
+            viewModel.resetTimer()
             endMapInteraction()
         }
         binding.homeMarkerButton.setOnClickListener {
@@ -230,6 +231,8 @@ internal class HomeFragment @Inject constructor(
         binding.homeMarkerButton.isVisible = needShow && !viewState.hasRoute
 
         binding.homeBuildRouteButton.isVisible = needShow && !viewState.hasRoute
+
+        binding.homeWalkingButton.isVisible = viewState.hasRoute
         binding.homeWalkingButton.setImageResource(
             if (viewState.walkingModeEnabled) R.drawable.ic_stop_24 else R.drawable.ic_start_24
         )

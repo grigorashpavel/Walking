@@ -7,7 +7,7 @@ import ru.pasha.feature.history.api.HistoryFeature
 import ru.pasha.feature.home.api.HomeFeature
 import ru.pasha.feature.home.api.HomeFeatureFactory
 import ru.pasha.feature.home.api.HomeNavigationProvider
-import ru.pasha.feature.home.api.LocationTrackerSettingProvider
+import ru.pasha.feature.home.api.SettingsProvider
 import ru.pasha.feature.settings.api.SettingsFeature
 import ru.pasha.feature.settings.api.SettingsManager
 import ru.pasha.walking.di.ApplicationComponent
@@ -42,9 +42,10 @@ interface HomeFeatureModule {
         @Provides
         fun provideLocationTrackingSetting(
             settingsManager: SettingsManager
-        ): LocationTrackerSettingProvider {
-            return object : LocationTrackerSettingProvider {
-                override val isEnabled: Boolean get() = settingsManager.locationTrackingEnabled.value
+        ): SettingsProvider {
+            return object : SettingsProvider {
+                override val locationTrackingEnabled: Boolean get() = settingsManager.locationTrackingEnabled.value
+                override val stepsTrackingEnabled: Boolean get() = settingsManager.stepsTrackingEnabled.value
             }
         }
     }

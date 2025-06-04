@@ -8,6 +8,7 @@ internal data class SettingsViewState(
     val language: Language,
     val theme: Theme,
     val locationTrackingEnabled: Boolean,
+    val stepsTrackingEnabled: Boolean,
     val error: ViewError?,
 )
 

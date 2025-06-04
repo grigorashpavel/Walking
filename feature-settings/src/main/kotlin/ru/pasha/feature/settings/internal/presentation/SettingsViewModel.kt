@@ -13,6 +13,7 @@ import ru.pasha.feature.settings.api.SettingsNavigationProvider
 import ru.pasha.feature.settings.internal.data.SettingsRepository
 import ru.pasha.feature.settings.internal.domain.Language
 import ru.pasha.feature.settings.internal.domain.LocationTracking
+import ru.pasha.feature.settings.internal.domain.StepsTracking
 import ru.pasha.feature.settings.internal.domain.Theme
 
 internal class SettingsViewModel @AssistedInject constructor(
@@ -25,6 +26,7 @@ internal class SettingsViewModel @AssistedInject constructor(
         theme = settingsManager.appTheme,
         language = settingsManager.appLanguage,
         locationTracking = settingsManager.locationTrackingEnabled,
+        stepsTracking = settingsManager.stepsTrackingEnabled,
     )
 ) {
     fun navigateBack() = settingsNavigationProvider.navigateBack()
@@ -42,6 +44,11 @@ internal class SettingsViewModel @AssistedInject constructor(
     fun changeLocationOption(newOption: LocationTracking) {
         settingsManager.locationTrackingEnabled = newOption
         updateState { copy(locationTracking = newOption) }
+    }
+
+    fun changeStepsOption(newOption: StepsTracking) {
+        settingsManager.stepsTrackingEnabled = newOption
+        updateState { copy(stepsTracking = newOption) }
     }
 
     fun logout() {

@@ -15,10 +15,9 @@ import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.Marker
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
-import ru.pasha.feature.home.R
 import ru.pasha.feature.home.api.HomeArguments
 import ru.pasha.feature.home.api.HomeNavigationProvider
-import ru.pasha.feature.home.api.LocationTrackerSettingProvider
+import ru.pasha.feature.home.api.SettingsProvider
 import ru.pasha.feature.home.internal.data.HomeRepository
 import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 
@@ -27,8 +26,9 @@ internal class HomeViewModel @AssistedInject constructor(
     private val navigationProvider: HomeNavigationProvider,
     @Assisted
     private val homeArguments: HomeArguments,
-    private val locationTrackerSettingProvider: LocationTrackerSettingProvider,
+    private val settingsProvider: SettingsProvider,
     private val homeRepository: HomeRepository,
+    private val timerController: TimerController,
 ) : BaseViewModel<HomeState, HomeViewState>(
     mapper = HomeMapper(walkingMapProvider.mapController::isReachedMaxMarkers),
     initialState = HomeState(
@@ -39,7 +39,10 @@ internal class HomeViewModel @AssistedInject constructor(
         walkingModeEnabled = false,
         route = homeArguments.route,
         previewModeEnabled = homeArguments.route != null,
-        locationTrackingEnabled = locationTrackerSettingProvider.isEnabled,
+        locationTrackingEnabled = settingsProvider.locationTrackingEnabled,
+        stepsTrackingEnabled = settingsProvider.stepsTrackingEnabled,
+        steps = null,
+        walkingTime = null,
     ),
 ) {
     private var isFirstPoint = true
@@ -64,6 +67,18 @@ internal class HomeViewModel @AssistedInject constructor(
             }
             .launchIn(viewModelScope)
 
+        timerController.time.onEach {
+            updateState { copy(walkingTime = it) }
+        }.launchIn(viewModelScope)
+
+        if (settingsProvider.stepsTrackingEnabled) {
+            walkingMapProvider.mapController.stepsFlow
+                .onEach {
+                    updateState { copy(steps = it) }
+                }
+                .launchIn(viewModelScope)
+        }
+
         homeArguments.route?.let {
             walkingMapProvider.mapController.setRoute(it)
             walkingMapProvider.mapController.setPreviewMode(true)
@@ -78,7 +93,10 @@ internal class HomeViewModel @AssistedInject constructor(
 
     fun onViewCreated() {
         updateState {
-            copy(locationTrackingEnabled = locationTrackerSettingProvider.isEnabled)
+            copy(
+                locationTrackingEnabled = settingsProvider.locationTrackingEnabled,
+                stepsTrackingEnabled = settingsProvider.stepsTrackingEnabled,
+            )
         }
     }
 
@@ -92,14 +110,24 @@ internal class HomeViewModel @AssistedInject constructor(
 
     fun toggleWalkingMode(target: Boolean? = null) {
         val canTrackLocation = state.locationTrackingEnabled
+        val canTrackSteps = state.stepsTrackingEnabled
 
         updateState {
             val toEnabled = target ?: !walkingModeEnabled
 
             if (toEnabled) needShowFeedback = true
 
+            if (toEnabled) {
+                timerController.start()
+            } else {
+                timerController.pause()
+            }
+
             if (canTrackLocation) {
                 switchLocation(toEnabled)
+            }
+            if (canTrackSteps) {
+                switchStepsOption(toEnabled)
             }
             walkingMapProvider.mapController.setWalkingMode(toEnabled)
             walkingMapProvider.mapController.setCenterMarkerVisibility(!toEnabled)
@@ -121,6 +149,10 @@ internal class HomeViewModel @AssistedInject constructor(
         viewModelScope.launch {
             walkingMapProvider.mapController.createMarker()
         }
+    }
+
+    fun resetTimer() {
+        timerController.reset()
     }
 
     private fun buildRoute(routeName: String) {
@@ -145,6 +177,10 @@ internal class HomeViewModel @AssistedInject constructor(
 
     fun switchLocation(enabled: Boolean) {
         walkingMapProvider.mapController.switchLocationListen(enabled = enabled)
+    }
+
+    private fun switchStepsOption(enabled: Boolean) {
+        walkingMapProvider.mapController.switchStepsListen(enabled)
     }
 
     fun toggleInteractionMode(target: Boolean) {
@@ -212,6 +248,11 @@ internal class HomeViewModel @AssistedInject constructor(
             CategoriesWidgetView.Category.RESIDENTIAL -> Category.Residential
             CategoriesWidgetView.Category.ROADS -> Category.Roads
         }
+    }
+
+    override fun onCleared() {
+        timerController.reset()
+        super.onCleared()
     }
 
     @AssistedFactory

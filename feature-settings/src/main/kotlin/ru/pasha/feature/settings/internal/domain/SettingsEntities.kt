@@ -18,3 +18,8 @@ enum class LocationTracking(val value: Boolean) {
     ENABLED(true),
     DISABLED(false)
 }
+
+enum class StepsTracking(val value: Boolean) {
+    ENABLED(true),
+    DISABLED(false)
+}

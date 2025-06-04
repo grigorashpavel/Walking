@@ -15,8 +15,9 @@ internal class HomeMapper(
                 markers = if (state.walkingModeEnabled) listOf() else state.markers,
                 isLoading = state.isLoading,
                 isMenuVisible = !state.interactionModeEnabled,
-                inRouteTime = null,
+                inRouteTime = state.walkingTime?.takeIf { state.walkingModeEnabled },
                 route = state.route,
+                steps = state.steps?.takeIf { state.walkingModeEnabled && state.stepsTrackingEnabled }
             ),
             addMarkerEnabled = !reachedMaxMarkers(),
             walkingModeEnabled = state.walkingModeEnabled,

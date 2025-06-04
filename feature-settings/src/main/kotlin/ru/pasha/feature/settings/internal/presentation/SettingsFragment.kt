@@ -49,6 +49,7 @@ internal class SettingsFragment @Inject constructor(
                     requireActivity().recreate()
                 },
                 changeLocationOptionCallback = viewModel::changeLocationOption,
+                changeStepsOptionCallback = viewModel::changeStepsOption,
                 feedbackCallback = {
                     FeedbackView.show(
                         requireContext(),
@@ -105,7 +106,8 @@ internal class SettingsFragment @Inject constructor(
         SettingsEntity.Theme(current = theme),
         SettingsEntity.Language(current = language),
         SettingsEntity.LocationTracking(enabled = locationTrackingEnabled),
-        SettingsEntity.Feedback
+        SettingsEntity.StepsTracking(enabled = stepsTrackingEnabled),
+        SettingsEntity.Feedback,
     )
 
     private fun showSnackbar(message: String) {

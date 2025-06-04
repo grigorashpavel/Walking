@@ -9,6 +9,7 @@ import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import ru.pasha.feature.settings.internal.domain.Language
 import ru.pasha.feature.settings.internal.domain.LocationTracking
+import ru.pasha.feature.settings.internal.domain.StepsTracking
 import ru.pasha.feature.settings.internal.domain.Theme
 import java.util.Locale
 
@@ -40,6 +41,15 @@ class SettingsManager(applicationContext: Context) {
             prefs.edit { putBoolean(LOCATION_KEY, value.value) }
         }
 
+    var stepsTrackingEnabled: StepsTracking
+        get() = when (prefs.getBoolean(STEPS_KEY, StepsTracking.DISABLED.value)) {
+            true -> StepsTracking.ENABLED
+            false -> StepsTracking.DISABLED
+        }
+        set(value) {
+            prefs.edit { putBoolean(STEPS_KEY, value.value) }
+        }
+
     fun applySettings() {
         applyTheme()
         applyLanguage()
@@ -63,5 +73,6 @@ class SettingsManager(applicationContext: Context) {
         const val THEME_KEY = "theme"
         const val LANGUAGE_KEY = "language"
         const val LOCATION_KEY = "location_tracking"
+        const val STEPS_KEY = "steps_tracking"
     }
 }

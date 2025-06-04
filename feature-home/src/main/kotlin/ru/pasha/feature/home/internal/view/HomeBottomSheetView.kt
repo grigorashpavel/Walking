@@ -87,8 +87,6 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         horizontalAdapter?.updateItems(state.markers, forceUpdate = false)
         verticalAdapter?.updateItems(state.markers, forceUpdate = true)
 
-        binding.homeRouteTimerText.isVisible = state.inRouteTime != null
-
         if (state.route != null) {
             val len = String.format("%.2f", state.route.length)
             binding.homeRouteLengthTitle.text = Text.Resource(ru.pasha.common.R.string.walking_app_route_length)
@@ -99,6 +97,23 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         } else {
             binding.homeRouteLengthTitle.isVisible = false
             binding.homeRouteLengthTitle.text = ""
+        }
+        if (state.steps != null) {
+            binding.homeRouteStepsText.isVisible = true
+            binding.homeRouteStepsText.text = Text.Resource(ru.pasha.common.R.string.walking_app_steps_count)
+                .format(context)
+                .toString()
+                .format(state.steps.toString())
+        } else {
+            binding.homeRouteStepsText.isVisible = false
+            binding.homeRouteStepsText.text = ""
+        }
+        if (state.inRouteTime != null) {
+            binding.homeRouteTimerText.text = state.inRouteTime
+            binding.homeRouteTimerText.isVisible = true
+        } else {
+            binding.homeRouteTimerText.isVisible = false
+            binding.homeRouteTimerText.text = ""
         }
 
         binding.homeMenuHistoryItem.isVisible = state.isMenuVisible
@@ -134,7 +149,8 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
         val isLoading: Boolean,
         val isMenuVisible: Boolean,
         val route: Route?,
-        val inRouteTime: Text?,
+        val inRouteTime: String?,
+        val steps: Int?,
     )
 
     @Parcelize

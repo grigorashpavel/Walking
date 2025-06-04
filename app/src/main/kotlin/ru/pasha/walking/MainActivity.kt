@@ -8,16 +8,20 @@ import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.AppNavigator
+import kotlinx.coroutines.flow.Flow
 import ru.pasha.common.di.findDependency
 import ru.pasha.core.navigation.BaseNavigationActivity
 import ru.pasha.core.navigation.NavigationHolder
 import ru.pasha.feature.banner.api.BannerUiDependencies
+import ru.pasha.feature.map.api.MapUiDependencies
+import ru.pasha.feature.map.api.StepController
 import ru.pasha.walking.auth.AuthManager
 import ru.pasha.walking.auth.AuthManagerProvider
 import ru.pasha.walking.di.DaggerActivityComponent
+import javax.inject.Inject
 
 @SuppressLint("HardwareIds")
-class MainActivity : BaseNavigationActivity(), BannerUiDependencies {
+class MainActivity : BaseNavigationActivity(), BannerUiDependencies, MapUiDependencies {
 
     private val startScreen: Screen by lazy {
         findDependency<NavigationHolder>().startScreen
@@ -38,6 +42,11 @@ class MainActivity : BaseNavigationActivity(), BannerUiDependencies {
     override val router: Router by lazy {
         findDependency<NavigationHolder>().router
     }
+
+    @Inject
+    lateinit var stepController: StepController
+
+    override val stepsFlow: Flow<Int> get() = stepController.stepsFlow
 
     override val navigator: AppNavigator by lazy {
         AppNavigator(
@@ -65,6 +74,16 @@ class MainActivity : BaseNavigationActivity(), BannerUiDependencies {
         if (savedInstanceState == null) {
             router.newRootChain(startScreen)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        stepController.startCounting()
+    }
+
+    override fun onStop() {
+        stepController.stopCounting()
+        super.onStop()
     }
 
     override val navigateToAuthAction: suspend () -> Boolean get() = {

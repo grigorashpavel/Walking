@@ -1,7 +1,9 @@
 package ru.pasha.feature.map.internal
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -25,7 +27,15 @@ internal class MapControllerProvider @Inject constructor(
 ) : MapController {
     val controllerFlow = MutableStateFlow(createDefaultState())
 
+    private val _mutableStepsFlow = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+    override val stepsFlow: Flow<Int> get() = _mutableStepsFlow.distinctUntilChanged()
+
+    fun updateSteps(steps: Int) {
+        _mutableStepsFlow.tryEmit(steps)
+    }
+
     var locationCallback: (Boolean) -> Unit = {}
+    var stepsCallback: (Boolean) -> Unit = {}
 
     private var userLocation: GeoPoint? = null
 
@@ -95,6 +105,10 @@ internal class MapControllerProvider @Inject constructor(
     override fun switchLocationListen(enabled: Boolean) {
         if (!enabled) userLocation = null
         locationCallback(enabled)
+    }
+
+    override fun switchStepsListen(enabled: Boolean) {
+        stepsCallback(enabled)
     }
 
     override fun setRoute(route: Route) {
