@@ -13,6 +13,8 @@ import ru.pasha.common.di.findDependency
 import ru.pasha.core.navigation.BaseNavigationActivity
 import ru.pasha.core.navigation.NavigationHolder
 import ru.pasha.feature.banner.api.BannerUiDependencies
+import ru.pasha.feature.home.api.HomeDependencies
+import ru.pasha.feature.home.api.HomeUiDependencies
 import ru.pasha.feature.map.api.MapUiDependencies
 import ru.pasha.feature.map.api.StepController
 import ru.pasha.walking.auth.AuthManager
@@ -21,7 +23,7 @@ import ru.pasha.walking.di.DaggerActivityComponent
 import javax.inject.Inject
 
 @SuppressLint("HardwareIds")
-class MainActivity : BaseNavigationActivity(), BannerUiDependencies, MapUiDependencies {
+class MainActivity : BaseNavigationActivity(), BannerUiDependencies, MapUiDependencies, HomeUiDependencies {
 
     private val startScreen: Screen by lazy {
         findDependency<NavigationHolder>().startScreen
@@ -88,5 +90,17 @@ class MainActivity : BaseNavigationActivity(), BannerUiDependencies, MapUiDepend
 
     override val navigateToAuthAction: suspend () -> Boolean get() = {
         (applicationContext as WalkingApp).authController.refreshSession()
+    }
+
+    override fun resetSteps() {
+        stepController.resetSteps()
+    }
+
+    override fun startSteps() {
+        stepController.startCounting()
+    }
+
+    override fun stopSteps() {
+        stepController.stopCounting()
     }
 }

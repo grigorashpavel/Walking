@@ -15,6 +15,7 @@ internal data class HomeState(
     val stepsTrackingEnabled: Boolean,
     val steps: Int?,
     val walkingTime: String?,
+    val walkingStarted: Boolean,
 )
 
 internal enum class Category {

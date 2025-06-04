@@ -115,14 +115,15 @@ internal class MapControllerProvider @Inject constructor(
         update { copy(route = route) }
     }
 
-    override suspend fun buildRoute(name: String?): Text? {
+    override suspend fun buildRoute(name: String?, weights: Map<String, Map<String, Float>>): Text? {
         val userNearPoint = userLocation?.let { repository.getNearestPoint(it) }
         return repository.buildRoute(
             pois = buildList {
                 userNearPoint?.getOrNull()?.point?.entity()?.let(::add)
                 controllerFlow.value.createdMarkers.map { it.point }.let(::addAll)
             },
-            name = name
+            name = name,
+            weights = weights,
         ).fold(
             onSuccess = { response ->
                 update { copy(route = response.route.entity()) }

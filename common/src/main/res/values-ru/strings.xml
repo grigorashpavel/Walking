@@ -80,4 +80,5 @@
     <string name="walking_app_listen_steps">Отслеживать шаги</string>
 
     <string name="walking_app_timer">В пути: %s ч. %s м. %s с.</string>
+    <string name="walking_app_route_time">Займет времени: %s ч. %s м. %s с.</string>
 </resources>

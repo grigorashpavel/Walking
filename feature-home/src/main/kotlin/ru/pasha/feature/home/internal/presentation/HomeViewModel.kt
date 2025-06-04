@@ -18,7 +18,11 @@ import ru.pasha.common.pattern.SideEffect
 import ru.pasha.feature.home.api.HomeArguments
 import ru.pasha.feature.home.api.HomeNavigationProvider
 import ru.pasha.feature.home.api.SettingsProvider
+import ru.pasha.feature.home.internal.data.DefaultWeights
 import ru.pasha.feature.home.internal.data.HomeRepository
+import ru.pasha.feature.home.internal.data.NatureWeights
+import ru.pasha.feature.home.internal.data.PedestrianWeights
+import ru.pasha.feature.home.internal.data.ResidentialWeights
 import ru.pasha.feature.home.internal.view.CategoriesWidgetView
 
 internal class HomeViewModel @AssistedInject constructor(
@@ -43,15 +47,24 @@ internal class HomeViewModel @AssistedInject constructor(
         stepsTrackingEnabled = settingsProvider.stepsTrackingEnabled,
         steps = null,
         walkingTime = null,
+        walkingStarted = false,
     ),
 ) {
     private var isFirstPoint = true
-    private var needShowFeedback = false
+    private var walkingWasStarted = false
     private var canShowRouteNameDialog = true
 
     private var buildJob: Job? = null
 
     init {
+        walkingMapProvider.mapController.route
+            .onEach { route ->
+                updateState {
+                    copy(route = route)
+                }
+            }
+            .launchIn(viewModelScope)
+
         walkingMapProvider.mapController.markers
             .onEach { markers ->
                 if (isFirstPoint && markers.isNotEmpty()) {
@@ -83,12 +96,6 @@ internal class HomeViewModel @AssistedInject constructor(
             walkingMapProvider.mapController.setRoute(it)
             walkingMapProvider.mapController.setPreviewMode(true)
         }
-
-        walkingMapProvider.mapController.route
-            .onEach { route ->
-                updateState { copy(route = route) }
-            }
-            .launchIn(viewModelScope)
     }
 
     fun onViewCreated() {
@@ -115,11 +122,19 @@ internal class HomeViewModel @AssistedInject constructor(
         updateState {
             val toEnabled = target ?: !walkingModeEnabled
 
-            if (toEnabled) needShowFeedback = true
+            if (!walkingWasStarted && toEnabled) {
+                sideEffect { ResetStepsCount }
+            }
+            if (toEnabled) {
+                updateState { copy(walkingStarted = true) }
+                walkingWasStarted = true
+            }
 
             if (toEnabled) {
                 timerController.start()
+                sideEffect { StartStepsCount }
             } else {
+                sideEffect { StopStepsCount }
                 timerController.pause()
             }
 
@@ -158,9 +173,16 @@ internal class HomeViewModel @AssistedInject constructor(
     private fun buildRoute(routeName: String) {
         buildJob?.cancel()
         buildJob = viewModelScope.launch {
+            val weights = when (state.category) {
+                Category.Nature -> NatureWeights
+                Category.Residential -> ResidentialWeights
+                Category.Roads -> PedestrianWeights
+                Category.None -> DefaultWeights
+            }
+
             updateState { copy(isLoading = true) }
             walkingMapProvider.mapController.setCenterMarkerVisibility(show = false)
-            val error = walkingMapProvider.mapController.buildRoute(name = routeName)
+            val error = walkingMapProvider.mapController.buildRoute(name = routeName, weights)
             if (error != null) {
                 walkingMapProvider.mapController.setCenterMarkerVisibility(show = true)
                 sideEffect { Error(error) }
@@ -207,8 +229,9 @@ internal class HomeViewModel @AssistedInject constructor(
     fun removeMarker(marker: Marker) = walkingMapProvider.mapController.removeMarker(marker)
 
     fun tryShowFeedback() {
-        if (state.route != null && needShowFeedback) {
-            needShowFeedback = false
+        if (state.route != null && walkingWasStarted) {
+            updateState { copy(walkingStarted = false) }
+            walkingWasStarted = false
             sideEffect { Feedback }
         }
     }
@@ -269,4 +292,7 @@ data class Error(val title: Text) : SideEffect
 data class FirstPoi(val title: Text, val subtitle: Text) : SideEffect
 data object Feedback : SideEffect
 data object RouteName : SideEffect
+data object StartStepsCount : SideEffect
+data object ResetStepsCount : SideEffect
+data object StopStepsCount : SideEffect
 data class RouteBadName(val message: Text) : SideEffect

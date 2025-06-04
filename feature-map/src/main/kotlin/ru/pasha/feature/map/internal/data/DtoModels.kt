@@ -9,6 +9,8 @@ data class BuildRouteV1Request(
     val name: String?,
     @SerialName("points")
     val points: List<Point>,
+    @SerialName("weights")
+    val weights: Map<String, Map<String, Float>>?,
 )
 
 @Serializable

@@ -143,7 +143,7 @@ internal class SettingsAdapter(
                 Text.Resource(ru.pasha.common.R.string.walking_app_feedback)
             )
 
-            setOnItemClickListener {
+            root.setOnClickListener {
                 feedbackCallback()
             }
         }

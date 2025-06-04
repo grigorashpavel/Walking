@@ -19,9 +19,13 @@ class RouteRepository @Inject constructor(private val api: RouteApi) {
             }
         }
 
-    suspend fun buildRoute(pois: List<GeoPoint>, name: String?): Result<BuildRouteSuccessData> =
+    suspend fun buildRoute(
+        pois: List<GeoPoint>,
+        name: String?,
+        weights: Map<String, Map<String, Float>>,
+    ): Result<BuildRouteSuccessData> =
         withContext(Dispatchers.IO) {
-            val request = BuildRouteV1Request(name = name, points = pois.map { it.dto() })
+            val request = BuildRouteV1Request(name = name, points = pois.map { it.dto() }, weights)
             return@withContext handleApiResponse<BuildRouteSuccessData> {
                 api.buildRoute(
                     idempotencyKey = UUID.randomUUID(),

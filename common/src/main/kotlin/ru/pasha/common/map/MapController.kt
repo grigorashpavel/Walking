@@ -19,7 +19,7 @@ interface MapController {
     suspend fun createMarker(): Marker?
     fun removeMarkers()
     fun removeMarker(marker: Marker)
-    suspend fun buildRoute(name: String?): Text?
+    suspend fun buildRoute(name: String?, weights: Map<String, Map<String, Float>>): Text?
     fun setRoute(route: Route)
     fun switchLocationListen(enabled: Boolean)
     fun switchStepsListen(enabled: Boolean)

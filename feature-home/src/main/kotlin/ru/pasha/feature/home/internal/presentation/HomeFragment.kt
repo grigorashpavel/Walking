@@ -26,6 +26,7 @@ import ru.pasha.common.pattern.extractScreenParams
 import ru.pasha.common.views.FeedbackDialog
 import ru.pasha.common.views.FeedbackView
 import ru.pasha.feature.home.R
+import ru.pasha.feature.home.api.HomeUiDependencies
 import ru.pasha.feature.home.databinding.HomeFragmentBinding
 import ru.pasha.feature.home.internal.view.HomeBottomSheetCallback
 import ru.pasha.feature.home.internal.view.HomeBottomSheetView
@@ -57,6 +58,10 @@ internal class HomeFragment @Inject constructor(
             fragmentManager = childFragmentManager,
             fragmentFactory = walkingMapProvider.fragmentFactory
         )
+    }
+
+    private val stepsController by lazy {
+        requireActivity() as HomeUiDependencies
     }
 
     override fun createViewModel(): HomeViewModel = viewModelFactory.create(extractScreenParams())
@@ -156,6 +161,8 @@ internal class HomeFragment @Inject constructor(
             viewModel.tryShowFeedback()
             viewModel.resetTimer()
             endMapInteraction()
+            stepsController.stopSteps()
+            stepsController.resetSteps()
         }
         binding.homeMarkerButton.setOnClickListener {
             viewModel.tryCreateMarker()
@@ -295,6 +302,18 @@ internal class HomeFragment @Inject constructor(
 
         is RouteBadName -> {
             showSnackbar(message = effect.message.format(requireContext()).toString())
+        }
+
+        is StopStepsCount -> {
+            stepsController.stopSteps()
+        }
+
+        is StartStepsCount -> {
+            stepsController.startSteps()
+        }
+
+        is ResetStepsCount -> {
+            stepsController.resetSteps()
         }
 
         else -> {}

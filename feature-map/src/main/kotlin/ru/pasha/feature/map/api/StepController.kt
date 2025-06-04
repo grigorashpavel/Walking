@@ -39,6 +39,10 @@ class StepController(private val context: Context) : SensorEventListener {
         }
     }
 
+    fun resetSteps() {
+        _stepsFlow.update { 0 }
+    }
+
     fun stopCounting() {
         sensorManager.unregisterListener(this)
     }

@@ -94,9 +94,15 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
                 .toString()
                 .format(len)
             binding.homeRouteLengthTitle.isVisible = true
+
+            binding.homeRouteCalculatedTime.text = calculateTravelTime(state.route.length)
+            binding.homeRouteCalculatedTime.isVisible = true
         } else {
             binding.homeRouteLengthTitle.isVisible = false
             binding.homeRouteLengthTitle.text = ""
+
+            binding.homeRouteCalculatedTime.isVisible = false
+            binding.homeRouteCalculatedTime.text = ""
         }
         if (state.steps != null) {
             binding.homeRouteStepsText.isVisible = true
@@ -118,6 +124,25 @@ internal class HomeBottomSheetView @JvmOverloads constructor(
 
         binding.homeMenuHistoryItem.isVisible = state.isMenuVisible
         binding.homeMenuSettingsItem.isVisible = state.isMenuVisible
+    }
+
+    private fun calculateTravelTime(meters: Double): String {
+        val speedKmH = 4.0
+        val hoursTotal = meters / 1000 / speedKmH
+        val totalSeconds = (hoursTotal * 3600).toInt()
+
+        val hours = totalSeconds / 3600
+        val remaining = totalSeconds % 3600
+        val minutes = remaining / 60
+        val seconds = remaining % 60
+
+        return Text.Resource(ru.pasha.common.R.string.walking_app_route_time)
+            .format(context).toString()
+            .format(
+                hours.toString().format("%02d"),
+                minutes.toString().format("%02d"),
+                seconds.toString().format("%02d"),
+            )
     }
 
     override fun remove(marker: Marker) {

@@ -24,7 +24,7 @@ internal class HistoryAdapter(
 
         binding.routeName.text = item.name
 
-        setOnItemClickListener {
+        binding.root.setOnClickListener {
             openCallback(item)
         }
 

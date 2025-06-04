@@ -12,6 +12,12 @@ interface HomeDependencies {
     val context: Context
 }
 
+interface HomeUiDependencies {
+    fun resetSteps()
+    fun startSteps()
+    fun stopSteps()
+}
+
 interface SettingsProvider {
     val locationTrackingEnabled: Boolean
     val stepsTrackingEnabled: Boolean

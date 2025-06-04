@@ -147,10 +147,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/homeRouteTimerText"
+            android:id="@+id/homeRouteCalculatedTime"
             style="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginHorizontal="16dp"
             android:textColor="?attr/walking_app_color_default_900"
             app:layout_constraintEnd_toEndOf="parent"
@@ -158,10 +159,23 @@
             app:layout_constraintTop_toBottomOf="@id/homeRouteLengthTitle" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/homeRouteTimerText"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="16dp"
+            android:textColor="?attr/walking_app_color_default_900"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/homeRouteCalculatedTime" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/homeRouteStepsText"
             style="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginHorizontal="16dp"
             android:textColor="?attr/walking_app_color_default_900"
             app:layout_constraintEnd_toEndOf="parent"

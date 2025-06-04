@@ -40,7 +40,7 @@ internal class HistoryRepository @Inject constructor(
         historyLocalManager.getSavedRoutes()?.map { it.entity() }
 
     suspend fun getSavedRoute(previewEntity: PreviewEntity): Route? =
-        historyLocalManager.loadDataFromFile(previewEntity.name).getOrNull()?.entity()
+        historyLocalManager.loadDataFromFile("${previewEntity.name}.json").getOrNull()?.entity()
 
     suspend fun saveRoute(route: ru.pasha.feature.history.internal.data.Route) =
         historyLocalManager.saveRouteToFile(data = route)

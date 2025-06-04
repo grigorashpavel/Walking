@@ -12,4 +12,5 @@ internal data class HomeViewState(
     val hasRoute: Boolean,
     val isPreviewMode: Boolean,
     val isLocationButtonVisible: Boolean,
+    val walkingStarted: Boolean,
 )

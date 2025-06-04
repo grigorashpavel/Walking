@@ -80,4 +80,5 @@
     <string name="walking_app_listen_steps">Track steps</string>
 
     <string name="walking_app_timer">Route time: %s h. %s m. %s s.</string>
+    <string name="walking_app_route_time">Takes time: %s h. %s m. %s s.</string>
 </resources>
