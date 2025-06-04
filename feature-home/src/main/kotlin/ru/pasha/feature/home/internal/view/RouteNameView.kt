@@ -1,9 +1,10 @@
 @file:Suppress("MagicNumber")
 
-package ru.pasha.common.views
+package ru.pasha.feature.home.internal.view
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
@@ -18,7 +19,6 @@ import android.view.animation.CycleInterpolator
 import android.view.animation.TranslateAnimation
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
@@ -33,11 +33,12 @@ import ru.pasha.common.extensions.dpToPx
 import ru.pasha.common.extensions.dpToPxF
 import ru.pasha.common.format
 
-class FeedbackDialog : DialogFragment() {
-    private lateinit var feedbackView: FeedbackView
+class RouteNameDialog : DialogFragment() {
+    private lateinit var feedbackView: RouteNameView
 
     interface Callback {
-        fun onSubmit(rating: Int, comment: String)
+        fun onSubmit(name: String)
+        fun onOpened()
         fun onCancel()
     }
 
@@ -48,10 +49,11 @@ class FeedbackDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        feedbackView = FeedbackView(requireContext()).apply {
-            setListener(object : FeedbackView.FeedbackListener {
-                override fun onSubmit(rating: Int, comment: String) {
-                    callback?.onSubmit(rating, comment)
+        callback?.onOpened()
+        feedbackView = RouteNameView(requireContext()).apply {
+            setListener(object : RouteNameView.Listener {
+                override fun onSubmit(name: String) {
+                    callback?.onSubmit(name)
                     dismiss()
                 }
 
@@ -62,6 +64,11 @@ class FeedbackDialog : DialogFragment() {
             })
         }
         return feedbackView
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        callback?.onCancel()
+        super.onDismiss(dialog)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -78,30 +85,28 @@ class FeedbackDialog : DialogFragment() {
         private const val TAG = "FeedbackDialog"
 
         fun show(manager: FragmentManager, callback: Callback) {
-            FeedbackDialog().apply {
+            RouteNameDialog().apply {
                 this.callback = callback
             }.show(manager, TAG)
         }
     }
 }
 
-class FeedbackView @JvmOverloads constructor(
+class RouteNameView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
-    interface FeedbackListener {
-        fun onSubmit(rating: Int, comment: String)
+    interface Listener {
+        fun onSubmit(name: String)
         fun onCancel()
     }
 
-    private var listener: FeedbackListener? = null
-    private var rating = 0
-    private val stars = mutableListOf<ImageView>()
+    private var listener: Listener? = null
     private lateinit var etComment: EditText
 
-    private val starContainer = LinearLayout(context).apply {
+    private val titleContainer = LinearLayout(context).apply {
         orientation = HORIZONTAL
         gravity = Gravity.CENTER
         setPadding(16.dpToPx)
@@ -126,47 +131,22 @@ class FeedbackView @JvmOverloads constructor(
         setBackgroundResource(R.drawable.feedback_background)
     }
 
-    fun setListener(listener: FeedbackListener) {
+    fun setListener(listener: Listener) {
         this.listener = listener
     }
 
-    @Suppress("LongMethod")
     private fun setupView() {
         TextView(context).apply {
-            val text = if (isReport) {
-                Text.Resource(R.string.walking_app_feedback_report)
-            } else {
-                Text.Resource(R.string.walking_app_rate_route)
-            }
-
-            this.text = text.format(context)
+            text = Text.Resource(R.string.walking_app_route_name_title).format(context)
             setTextColor(resources.getColor(R.color.walking_app_night_900))
             textSize = 20f
             gravity = Gravity.CENTER
             addView(this, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         }
-        addView(starContainer, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        addView(titleContainer, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
 
-        val rateSize = if (isReport) 0 else 5
-        repeat(rateSize) { index ->
-            ImageView(context).apply {
-                setImageResource(R.drawable.ic_star_outline)
-                layoutParams = LayoutParams(40.dpToPx, 40.dpToPx).apply {
-                    marginEnd = 4.dpToPx
-                }
-                setOnClickListener { setRating(index + 1) }
-                stars.add(this)
-                starContainer.addView(this)
-            }
-        }
-
-        val hint = if (isReport) {
-            Text.Resource(R.string.walking_app_feedback_report_hint)
-        } else {
-            Text.Resource(R.string.walking_app_your_comment)
-        }
         etComment = EditText(context).apply {
-            this.hint = hint.format(context)
+            this.hint = Text.Resource(R.string.walking_app_route_name_hint).format(context)
             background = createInputBackground()
             setPadding(16.dpToPx, 12.dpToPx, 16.dpToPx, 12.dpToPx)
             gravity = Gravity.TOP
@@ -205,36 +185,12 @@ class FeedbackView @JvmOverloads constructor(
         }
     }
 
-    private fun setRating(newRating: Int) {
-        rating = newRating
-        stars.forEachIndexed { index, imageView ->
-            val resId =
-                if (index < rating) R.drawable.ic_star_filled else R.drawable.ic_star_outline
-            imageView.setImageResource(resId)
-            imageView.animate().scaleX(1.2f).scaleY(1.2f).setDuration(200).withEndAction {
-                imageView.animate().scaleX(1f).scaleY(1f).duration = 100
-            }
-        }
-    }
-
     private fun handleSubmit() {
         if (etComment.text.isBlank()) {
             animateErrorText()
             return
-        } else if (!isReport && rating == 0) {
-            animateErrorStars()
-            return
         }
-        listener?.onSubmit(rating, etComment.text.toString())
-    }
-
-    private fun animateErrorStars() {
-        val shake = TranslateAnimation(0f, 30f, 0f, 0f).apply {
-            duration = 300
-            interpolator = CycleInterpolator(3f)
-        }
-
-        starContainer.startAnimation(shake)
+        listener?.onSubmit(etComment.text.toString())
     }
 
     private fun animateErrorText() {
@@ -261,14 +217,12 @@ class FeedbackView @JvmOverloads constructor(
     }
 
     companion object {
-        private var isReport = false
-        fun show(context: Context, isReport: Boolean, callback: FeedbackDialog.Callback) {
-            this.isReport = isReport
+        fun show(context: Context, callback: RouteNameDialog.Callback) {
             val manager = (context as? androidx.fragment.app.FragmentActivity)
                 ?.supportFragmentManager
                 ?: throw IllegalArgumentException("Context must be FragmentActivity")
 
-            FeedbackDialog.show(manager, callback)
+            RouteNameDialog.show(manager, callback)
         }
     }
 }

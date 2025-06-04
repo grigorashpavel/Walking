@@ -1,3 +1,5 @@
+@file:Suppress("NestedBlockDepth")
+
 package ru.pasha.feature.map.internal.presentation
 
 import android.content.Context

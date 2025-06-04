@@ -29,6 +29,8 @@ import ru.pasha.feature.home.R
 import ru.pasha.feature.home.databinding.HomeFragmentBinding
 import ru.pasha.feature.home.internal.view.HomeBottomSheetCallback
 import ru.pasha.feature.home.internal.view.HomeBottomSheetView
+import ru.pasha.feature.home.internal.view.RouteNameDialog
+import ru.pasha.feature.home.internal.view.RouteNameView
 import ru.pasha.feature.home.internal.view.TopPanelBehaviour
 import javax.inject.Inject
 
@@ -158,7 +160,7 @@ internal class HomeFragment @Inject constructor(
             viewModel.tryCreateMarker()
         }
         binding.homeBuildRouteButton.setOnClickListener {
-            viewModel.buildRoute()
+            viewModel.showRouteNameDialog()
         }
         binding.homeLocationButton.setOnClickListener {
             viewModel.switchLocation(enabled = true)
@@ -267,6 +269,29 @@ internal class HomeFragment @Inject constructor(
                     override fun onCancel() = Unit
                 }
             )
+        }
+
+        is RouteName -> {
+            RouteNameView.show(
+                context = requireContext(),
+                callback = object : RouteNameDialog.Callback {
+                    override fun onSubmit(name: String) {
+                        viewModel.onRouteNameDialogClosed(name)
+                    }
+
+                    override fun onOpened() {
+                        viewModel.onRouteNameDialogOpened()
+                    }
+
+                    override fun onCancel() {
+                        viewModel.onRouteNameDialogClosed(routeName = null)
+                    }
+                }
+            )
+        }
+
+        is RouteBadName -> {
+            showSnackbar(message = effect.message.format(requireContext()).toString())
         }
 
         else -> {}

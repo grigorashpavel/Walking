@@ -70,4 +70,9 @@
     <string name="walking_app_feedback">Обратная связь</string>
     <string name="walking_app_feedback_report">Сообщить о проблеме</string>
     <string name="walking_app_feedback_report_hint">Опишите проблему…</string>
+
+    <string name="walking_app_route_name_title">Назовите маршрут</string>
+    <string name="walking_app_route_name_hint">Введите название</string>
+    <string name="walking_app_route_name_error">Длина названия должна быть от 5 до 45 символов</string>
+    <string name="walking_app_route_not_named">Для построения маршрута нужно название</string>
 </resources>

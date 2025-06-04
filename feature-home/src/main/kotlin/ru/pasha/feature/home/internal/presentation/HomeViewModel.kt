@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package ru.pasha.feature.home.internal.presentation
 
 import androidx.lifecycle.viewModelScope
@@ -13,6 +15,7 @@ import ru.pasha.common.di.WalkingMapProvider
 import ru.pasha.common.map.Marker
 import ru.pasha.common.pattern.BaseViewModel
 import ru.pasha.common.pattern.SideEffect
+import ru.pasha.feature.home.R
 import ru.pasha.feature.home.api.HomeArguments
 import ru.pasha.feature.home.api.HomeNavigationProvider
 import ru.pasha.feature.home.api.LocationTrackerSettingProvider
@@ -41,6 +44,7 @@ internal class HomeViewModel @AssistedInject constructor(
 ) {
     private var isFirstPoint = true
     private var needShowFeedback = false
+    private var canShowRouteNameDialog = true
 
     private var buildJob: Job? = null
 
@@ -119,12 +123,12 @@ internal class HomeViewModel @AssistedInject constructor(
         }
     }
 
-    fun buildRoute() {
+    private fun buildRoute(routeName: String) {
         buildJob?.cancel()
         buildJob = viewModelScope.launch {
             updateState { copy(isLoading = true) }
             walkingMapProvider.mapController.setCenterMarkerVisibility(show = false)
-            val error = walkingMapProvider.mapController.buildRoute(null)
+            val error = walkingMapProvider.mapController.buildRoute(name = routeName)
             if (error != null) {
                 walkingMapProvider.mapController.setCenterMarkerVisibility(show = true)
                 sideEffect { Error(error) }
@@ -179,6 +183,29 @@ internal class HomeViewModel @AssistedInject constructor(
         }
     }
 
+    fun showRouteNameDialog() {
+        if (canShowRouteNameDialog) sideEffect { RouteName }
+    }
+
+    fun onRouteNameDialogOpened() {
+        canShowRouteNameDialog = false
+    }
+
+    fun onRouteNameDialogClosed(routeName: String?) {
+        canShowRouteNameDialog = true
+        if (routeName != null) {
+            if (routeName.length !in ROUTE_NAME_LEN) {
+                sideEffect {
+                    RouteBadName(Text.Resource(ru.pasha.common.R.string.walking_app_route_name_error))
+                }
+            } else {
+                buildRoute(routeName)
+            }
+        } else {
+            sideEffect { RouteBadName(Text.Resource(ru.pasha.common.R.string.walking_app_route_not_named)) }
+        }
+    }
+
     private fun CategoriesWidgetView.Category.toSimpleCategory(): Category {
         return when (this) {
             CategoriesWidgetView.Category.NATURE -> Category.Nature
@@ -191,8 +218,14 @@ internal class HomeViewModel @AssistedInject constructor(
     interface Factory {
         fun create(arguments: HomeArguments): HomeViewModel
     }
+
+    private companion object {
+        val ROUTE_NAME_LEN = 5..45
+    }
 }
 
 data class Error(val title: Text) : SideEffect
 data class FirstPoi(val title: Text, val subtitle: Text) : SideEffect
 data object Feedback : SideEffect
+data object RouteName : SideEffect
+data class RouteBadName(val message: Text) : SideEffect

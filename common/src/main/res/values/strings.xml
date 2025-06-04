@@ -70,4 +70,9 @@
     <string name="walking_app_feedback">Feedback</string>
     <string name="walking_app_feedback_report">Report Problem</string>
     <string name="walking_app_feedback_report_hint">Describe Problem…</string>
+
+    <string name="walking_app_route_name_title">Route Name</string>
+    <string name="walking_app_route_name_hint">Enter route name</string>
+    <string name="walking_app_route_name_error">Name must be between 5 and 45 characters</string>
+    <string name="walking_app_route_not_named">Route name required</string>
 </resources>

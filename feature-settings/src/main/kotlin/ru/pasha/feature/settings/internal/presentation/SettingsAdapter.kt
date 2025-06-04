@@ -30,6 +30,7 @@ internal class SettingsAdapter(
         binding.setupItem(item)
     }
 
+    @Suppress("LongMethod")
     private fun SettingsItemBinding.setupItem(item: SettingsEntity) = when (item) {
         is SettingsEntity.Language -> {
             settingsTitle.isVisible = false
